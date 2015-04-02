@@ -41,7 +41,7 @@ class Grid:
         '''
         Sets the value of a grid coordinate axis.
         '''
-        i = ['lev','lat','lon'].index(AxisName)
+        i = ['lon','lat','lev'].index(AxisName)
         n = self.Shape3D[i]
         if AxisName in kwargs:
             self.value[AxisName] = array(kwargs[AxisName])

@@ -21,6 +21,7 @@ xnew = xold + xinc
 
 ! Asselin filter
 xold_out = x + afc*(xold + xnew - 2.*x)
+!xold_out = xold
 
 ! update
 x_out = xnew

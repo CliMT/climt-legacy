@@ -2,68 +2,68 @@
 # with corresponding long names, units and nominal rank
 
 KnownFields = {
-    'ps':         ['surface pressure',              'mb', '2D'],
-    'Ts':         ['surface temperature',            'K', '2D'],
-    'z0':         ['geopotential at lowest p level', 'm', '2D'],
-    'hIce':       ['sea ice thickness',              'm', '2D'],
-    'zen':        ['solar zenith angle',           'deg', '2D'],
-    'solin':      ['insolation',                 'W m-2', '2D'],
-    'flus':       ['surface upwelling LW',       'W m-2', '2D'],
-    'asdif':      ['diffuse SW albedo',              '-', '2D'],
-    'asdir':      ['direct SW albedo',               '-', '2D'],
-    'aldif':      ['diffuse LW albedo',              '-', '2D'],
-    'aldir':      ['diffuse LW albedo',              '-', '2D'],
-    'SrfSenFlx':  ['surface sensible heat flux', 'W m-2', '2D'],
-    'SrfLatFlx':  ['surface latent heat flux',   'W m-2', '2D'],
-    'taux':       ['surface zonal windstress',      'Pa', '2D'],
-    'tauy':       ['surface merid windstress',      'Pa', '2D'],
-    'SrfRadFlx':  ['net surface radiative flux', 'W m-2', '2D'],
-    'Qflx':       ['Q flux (ocean heat convergence)', 'W m-2', '2D'],
-    'SwToa':      ['net top-of-atmos SW flux', 'W m-2', '2D'],
-    'LwToa':      ['net top-of-atmos LW flux', 'W m-2', '2D'],
-    'SwSrf':      ['net surface SW flux',      'W m-2', '2D'],
-    'LwSrf':      ['net surface LW flux',      'W m-2', '2D'],
-    'SwToaCf':    ['top-of-atmos SW cloud forc', 'W m-2', '2D'],
-    'LwToaCf':    ['top-of-atmos LW cloud forc', 'W m-2', '2D'],
-    'SwSrfCf':    ['surface SW cloud forc',      'W m-2', '2D'],
-    'LwSrfCf':    ['surface LW cloud forc',      'W m-2', '2D'],
-    'cbmf':       ['cloud base mass flux',      'kg s-1', '2D'],
-    'precc':      ['convective precip rate',  'mm day-1', '2D'],
-    'Tsdot':      ['surface heating rate',       'K s-1', '2D'],
-    'p':          ['atmospheric pressure',            'mb', '3D'],
-    'dp':         ['level thickness',                 'mb', '3D'],
-    'T':          ['atmospheric temperature',          'K', '3D'],
-    'theta':      ['potential temperature',            'K', '3D'],
-    'Te':         ['target temp, Newt. cooling',       'K', '3D'],
-    'q':          ['specific humidity',           'g kg-1', '3D'],
-    'U':          ['zonal wind',                   'm s-1', '3D'],
-    'V':          ['meridional wind',              'm s-1', '3D'],
-    'W':          ['pressure velocity',            'Pa s-1', '3D'],
-    'psi':        ['streamfunction',                'm Pa s-1', '3D'],
-    'cldf':       ['cloud fraction',                   '-', '3D'],
-    'ciwp':       ['cloud ice water path',      'g m-2', '3D'],
-    'clwp':       ['cloud liquid water path',      'g m-2', '3D'],
-    'r_liq':      ['Effective radius, liquid drop','micron', '3D'],
-    'r_ice':      ['Effective radius, ice drop','micron', '3D'],
-    'o3':         ['ozone mass mix. ratio',      'kg kg-1', '3D'],
-    'swflx':      ['SW radiative flux',            'W m-2', '3D'],
-    'lwflx':      ['LW radiative flux',            'W m-2', '3D'],
-    'lwuflx':     ['upward LW radiative flux',     'W m-2', '3D'],
-    'lwdflx':     ['downward LW radiative flux',     'W m-2', '3D'],
-    'swhr':       ['SW heating rate',            'K day-1', '3D'],
-    'lwhr':       ['LW heating rate',            'K day-1', '3D'],
-    'lwtau':      ['Broadband LW optical depth',       '-', '3D'],
-    'TdotDyn':    ['dynamical heating rate',     'K day-1', '3D'],
-    'TdotRad':    ['net radiative heating rate', 'K day-1', '3D'],
-    'TdotTurb':   ['turbulent heating rate',     'K day-1', '3D'],
-    'TdotConv':   ['convective heating rate',    'K day-1', '3D'],
-    'qdotDyn':    ['dynamical moistening rate', 'g kg-1 day-1', '3D'],
-    'qdotTurb':   ['turbulent moistening rate', 'g kg-1 day-1', '3D'],
-    'qdotConv':   ['convective moistening rate','g kg-1 day-1', '3D'],
-    'UdotDyn':    ['dynamical zonal accn',       'm s-1 day-1', '3D'],
-    'UdotTurb':   ['turbulent zonal drag',       'm s-1 day-', '3D'],
-    'VdotDyn':    ['dynamical merid accn',       'm s-1 day-1', '3D'],
-    'VdotTurb':   ['turbulent merid drag',       'm s-1 day-1', '3D'],
+    'ps': ['surface pressure', 'mb', '2D'],
+    'Ts': ['surface temperature', 'K', '2D'],
+    'z0': ['geopotential at lowest p level', 'm', '2D'],
+    'hIce': ['sea ice thickness', 'm', '2D'],
+    'zen': ['solar zenith angle', 'deg', '2D'],
+    'solin': ['insolation', 'W m-2', '2D'],
+    'flus': ['surface upwelling LW', 'W m-2', '2D'],
+    'asdif': ['diffuse SW albedo', '-', '2D'],
+    'asdir': ['direct SW albedo', '-', '2D'],
+    'aldif': ['diffuse LW albedo', '-', '2D'],
+    'aldir': ['diffuse LW albedo', '-', '2D'],
+    'SrfSenFlx': ['surface sensible heat flux', 'W m-2', '2D'],
+    'SrfLatFlx': ['surface latent heat flux', 'W m-2', '2D'],
+    'taux': ['surface zonal windstress', 'Pa', '2D'],
+    'tauy': ['surface merid windstress', 'Pa', '2D'],
+    'SrfRadFlx': ['net surface radiative flux', 'W m-2', '2D'],
+    'Qflx': ['Q flux (ocean heat convergence)', 'W m-2', '2D'],
+    'SwToa': ['net top-of-atmos SW flux', 'W m-2', '2D'],
+    'LwToa': ['net top-of-atmos LW flux', 'W m-2', '2D'],
+    'SwSrf': ['net surface SW flux', 'W m-2', '2D'],
+    'LwSrf': ['net surface LW flux', 'W m-2', '2D'],
+    'SwToaCf': ['top-of-atmos SW cloud forc', 'W m-2', '2D'],
+    'LwToaCf': ['top-of-atmos LW cloud forc', 'W m-2', '2D'],
+    'SwSrfCf': ['surface SW cloud forc', 'W m-2', '2D'],
+    'LwSrfCf': ['surface LW cloud forc', 'W m-2', '2D'],
+    'cbmf': ['cloud base mass flux', 'kg s-1', '2D'],
+    'precc': ['convective precip rate', 'mm day-1', '2D'],
+    'Tsdot': ['surface heating rate', 'K s-1', '2D'],
+    'p': ['atmospheric pressure', 'mb', '3D'],
+    'dp': ['level thickness', 'mb', '3D'],
+    'T': ['atmospheric temperature', 'K', '3D'],
+    'theta': ['potential temperature', 'K', '3D'],
+    'Te': ['target temp, Newt. cooling', 'K', '3D'],
+    'q': ['specific humidity', 'g kg-1', '3D'],
+    'U': ['zonal wind', 'm s-1', '3D'],
+    'V': ['meridional wind', 'm s-1', '3D'],
+    'W': ['pressure velocity', 'Pa s-1', '3D'],
+    'psi': ['streamfunction', 'm Pa s-1', '3D'],
+    'cldf': ['cloud fraction', '-', '3D'],
+    'ciwp': ['cloud ice water path', 'g m-2', '3D'],
+    'clwp': ['cloud liquid water path', 'g m-2', '3D'],
+    'r_liq': ['Effective radius, liquid drop','micron', '3D'],
+    'r_ice': ['Effective radius, ice drop','micron', '3D'],
+    'o3': ['ozone mass mix. ratio', 'kg kg-1', '3D'],
+    'swflx': ['SW radiative flux', 'W m-2', '3D'],
+    'lwflx': ['LW radiative flux', 'W m-2', '3D'],
+    'lwuflx': ['upward LW radiative flux', 'W m-2', '3D'],
+    'lwdflx': ['downward LW radiative flux', 'W m-2', '3D'],
+    'swhr': ['SW heating rate', 'K day-1', '3D'],
+    'lwhr': ['LW heating rate', 'K day-1', '3D'],
+    'lwtau': ['Broadband LW optical depth', '-', '3D'],
+    'TdotDyn': ['dynamical heating rate', 'K day-1', '3D'],
+    'TdotRad': ['net radiative heating rate', 'K day-1', '3D'],
+    'TdotTurb': ['turbulent heating rate', 'K day-1', '3D'],
+    'TdotConv': ['convective heating rate', 'K day-1', '3D'],
+    'qdotDyn': ['dynamical moistening rate', 'g kg-1 day-1', '3D'],
+    'qdotTurb': ['turbulent moistening rate', 'g kg-1 day-1', '3D'],
+    'qdotConv': ['convective moistening rate','g kg-1 day-1', '3D'],
+    'UdotDyn': ['dynamical zonal accn', 'm s-1 day-1', '3D'],
+    'UdotTurb': ['turbulent zonal drag', 'm s-1 day-', '3D'],
+    'VdotDyn': ['dynamical merid accn', 'm s-1 day-1', '3D'],
+    'VdotTurb': ['turbulent merid drag', 'm s-1 day-1', '3D'],
     # SHOULD THESE BE PARAMETERS?
     'cloud_single_scattering_albedo': ['blah', 'blah', '3D'],
     'cloud_asymmetry_parameter': ['blah', 'blah', '3D'],
@@ -73,6 +73,7 @@ KnownFields = {
     'lev': ['pressure at upper edge of layer', 'mb', '3D'],
     'h2o': ['alternative to specific humidity; H2O concentration','concentration','3D']
 }
+
 
 import os
 from numpy import *
@@ -139,8 +140,7 @@ class State:
 
         # Set fields' values to input or default
         Shape3D = self.Grid.Shape3D
-        Shape2D = Shape3D[1:]
-        
+        Shape2D = Shape3D[:-1]
         for Field in FieldNames:
             exec('Shape = Shape%s' % KnownFields[Field][2])
             if Field in kwargs:
@@ -156,8 +156,8 @@ class State:
 
         if 'ps' in FieldNames and 'ps' not in kwargs:
             if 'p' in self.Now:
-                dp = self.Now['p'][-1] - self.Now['p'][-2]
-                self.Now['ps'] = self.Now['p'][-1] + dp/2.
+                dp = self.Now['p'][:,:,-1] - self.Now['p'][:,:,-2]
+                self.Now['ps'] = self.Now['p'][:,:,-1] + dp/2.
             elif LevType == 'p':
                 dp = self.Grid['lev'][-1] - self.Grid['lev'][-2]
                 self.Now['ps'] = zeros(Shape2D,'d') + self.Grid['lev'][-1] + dp/2.
@@ -179,7 +179,7 @@ class State:
         
         # Pressure
         if 'p' == Field:
-            nlev = Shape[0]
+            nlev = Shape[-1]
             lev = (arange(nlev)+0.5) * 1000./nlev
             return transpose(resize(lev,Shape[::-1]))
 

@@ -8,9 +8,9 @@ from io         import IO
 from utils      import squeeze
 from _grid      import get_nlev, get_nlat, get_nlon
 
-class Component:
+class Component(object):
     """
-    Abstract class defining methods inherited by all CliMT components.
+    Abstract class defininig methods inherited by all CliMT components.
     """
     def __init__(self, **kwargs):
 
@@ -240,9 +240,9 @@ class Component:
         '''
         Returns shape of 3D arrays to be passed to extension.
         '''
-        return (self._getAxisLength('lev', **kwargs),
+        return (self._getAxisLength('lon', **kwargs),
                 self._getAxisLength('lat', **kwargs),
-                self._getAxisLength('lon', **kwargs))
+                self._getAxisLength('lev', **kwargs))
 
 
     def _getAxisLength(self, AxisName, **kwargs):
@@ -268,11 +268,11 @@ class Component:
             for key in kwargs:
                 if key in KnownFields:
                     if KnownFields[key][2] == '2D' and AxisName != 'lev':
-                        i = ['lat','lon'].index(AxisName)
+                        i = ['lon','lat'].index(AxisName)
                         try:    n = array(kwargs[key]).shape[i] 
                         except: n = 1
                     elif KnownFields[key][2] == '3D':
-                        i = ['lev','lat','lon'].index(AxisName)
+                        i = ['lon','lat','lev'].index(AxisName)
                         try:    n = array(kwargs[key]).shape[i]
                         except: n = 1
 
