@@ -182,7 +182,6 @@ def build_dycore(name=None, dir=None, cppflags='', f77flags='', f90flags='', \
 
     os.system('make');
     os.system('cp -f _%s.so ../../../lib/climt/' % name);
-    os.system('cp -f gfs_namelist ../../../lib/climt/');
     os.chdir('../../..');
 
 def setupClimt():
