@@ -1,0 +1,3 @@
+[submodule "src/dynamics/gfs"]
+	path = src/dynamics/gfs
+	url = https://github.com/JoyMonteiro/pyGFS.git
