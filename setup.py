@@ -22,8 +22,8 @@ else:
 Extensions = [
     {'name':'grid',
      'dir':'src/grid'},
-    {'name':'timestep',
-     'dir':'src/timestep'},
+    #{'name':'timestep',
+    # 'dir':'src/timestep'},
     {'name':'thermodyn',
      'dir':'src/thermodyn'},
     {'name':'emanuel_convection',
@@ -63,7 +63,7 @@ Extensions = [
 #    {'name':'rrtm_radiation_fortran',
 #     'dir':'src/radiation/rrtm'},
     {'name':'gfs_dynamics',
-     'dir':'src/dynamics/gfs'}
+     'dir':'src/dynamics/gfs/gfs'}
     ]
 
 # define extensions that will be built when the --lite option is used
@@ -181,8 +181,8 @@ def build_dycore(name=None, dir=None, cppflags='', f77flags='', f90flags='', \
     os.chdir(dir);
 
     os.system('make');
-    os.system('cp -f _%s.so ../../../lib/climt/' % name);
-    os.chdir('../../..');
+    os.system('cp -f _%s.so ../../../../lib/climt/' % name);
+    os.chdir('../../../..');
 
 def setupClimt():
     # Build all extensions
