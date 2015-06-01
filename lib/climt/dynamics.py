@@ -110,9 +110,13 @@ class dynamics(Component):
                 self.nlon = kwargs['nlon'];
             else:
                 self.nlon = 192;
+            if 'dt' in kwargs:
+                self.timestep = kwargs['dt']
+            else:
+                self.timestep = 1200.0
 
 
-            _gfsDycore = _gfs_dynamics(self.nlon,self.nlat);
+            _gfsDycore = _gfs_dynamics(self.nlon,self.nlat, timestep=self.timestep);
             _gfsDycore.initModel();
             u,v,t,tr,ps,p = _gfsDycore.getResult();
 
@@ -123,7 +127,8 @@ class dynamics(Component):
             args['V'] = v;
             args['theta'] = t;
             args['q'] = tr;
-            print 'here'
+            args.update(kwargs)
+            #print 'here'
         except: raise ImportError, \
           '\n \n ++++ CliMT.dynamics: Could not load GFS dynamical core'
         # Define some attributes
@@ -133,12 +138,12 @@ class dynamics(Component):
         self.driver         = _gfsDycore.driver
         self.SteppingScheme = 'explicit'
         self.ToExtension    = ['U','V','theta','q','ps','p']
-#self.FromExtension  = ['Uinc','Vinc','thetainc','qinc','psinc','pinc']
-        self.FromExtension  = ['U','V','theta','q','ps','p']
+        self.FromExtension  = ['Uinc','Vinc','thetainc','qinc','psinc','pinc']
+        #self.FromExtension  = ['U','V','theta','q','ps','p']
         self.Required       = ['U','V','theta','q','ps','p']
-        self.Diagnostic     = ['U','V','theta','q','ps','p']
-        self.Prognostic     = []
-        #self.FromExtension  = ['V','Tinc','Uinc','Vinc','qinc','psi','theta','Te','W',
-        #                       'TdotDyn','UdotDyn','VdotDyn','qdotDyn']
+        #self.Diagnostic     = ['U','V','theta','q','ps','p']
+        self.Diagnostic     = []
+        #self.Prognostic     = []
+        self.Prognostic     = ['U','V','theta','q','ps','p']
 
         return args;
