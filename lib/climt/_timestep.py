@@ -28,3 +28,11 @@ def asselin(afc, xnew, x, xold):
 
     return x_out, xold_out
 
+
+c1 = 1.91666666667 #23/12
+c2 = 1.33333333333 #16/12
+c3 = 0.41666666667 #5/12
+
+def adams_bashforth(xinc, xinc_old, xinc_older, x):
+
+    return x + (23.*xinc - 16.*xinc_old + 5.*xinc_older)/12.
