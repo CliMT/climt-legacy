@@ -78,7 +78,7 @@ KnownFields = {
 import os
 from numpy import *
 from grid      import Grid
-from _timestep import leapfrog
+from _timestep import adams_bashforth
 
 class State:
     '''
@@ -118,11 +118,28 @@ class State:
         # Invoke compiled leapfrog scheme
         afc = Component['afc']
         for key in Component.Inc:
+
             Shape = self.Now[key].shape
-            self.Now[key], self.Old[key] = \
-               leapfrog(afc, Component.Inc[key], self.Now[key], self.Old[key])
+            #For the first iteration, IncOld and IncOlder are empty.
+            #Update them to zero
+                
+            if key not in Component.IncOld.keys():
+                print 'initialising incOld'
+                Component.IncOld[key] = zeros(Shape)
+
+            if key not in Component.IncOlder.keys():
+                print 'initialising incOlder'
+                Component.IncOlder[key] = zeros(Shape)
+
+            self.Now[key] = \
+               adams_bashforth(Component.Inc[key], Component.IncOld[key],\
+                               Component.IncOlder[key], self.Now[key])
             # make sure array shape is unchanged 
-            for dic in [self.Now, self.Old]: dic[key] = reshape(dic[key],Shape)
+            for dic in [self.Now]: dic[key] = reshape(dic[key],Shape)
+
+            #Propagate increments backwards in time
+            Component.IncOlder[key] = Component.IncOld[key].copy()
+            Component.IncOld[key] = Component.Inc[key].copy()
 
         # Advance time counter
         self.ElapsedTime += Component['dt']
