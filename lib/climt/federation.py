@@ -6,7 +6,7 @@ from component  import Component
 from parameters import Parameters
 from state      import State
 from plot       import Monitor, Plot
-from io         import IO
+from inout      import IO
 from _timestep  import asselin
 import _grid
 
@@ -112,7 +112,10 @@ class federation(Component):
                 % (n_fed,AxisName)
 
         # Dictionary to hold increments on prognos fields
+        # We need three increments for a third order Adams-Bashforth
         self.Inc = {}
+        self.IncOld = {}
+        self.IncOlder = {}
 
         # Adjust components' attributes
         for component in self.components:
