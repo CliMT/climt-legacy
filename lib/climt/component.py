@@ -4,7 +4,7 @@ from numpy import *
 from parameters import Parameters
 from state      import State, KnownFields
 from plot       import Monitor, Plot
-from io         import IO
+from inout      import IO
 from utils      import squeeze
 from _grid      import get_nlev, get_nlat, get_nlon
 
@@ -36,12 +36,25 @@ class Component(object):
         else:
             self.UpdateFreq = self.Params['dt']
 
+        # Check if model can integrate
+        if 'CanIntegrate' in kwargs:
+                self.CanIntegrate = kwargs.pop('CanIntegrate')
+                if ('Integrates' in kwargs) and self.CanIntegrate: # this is a list of fields it can integrate
+                    self.Integrates = kwargs.pop('Integrates')
+                else:
+                    raise IndexError, '\n\n CanIntegrate keyword must be accompanied by \
+                        the Integrates keyword which provides a list of fields that this\
+                        Component accepts for integration.'
+
         # Initialize State
         self.State = State(self, **kwargs)
         self.Grid = self.State.Grid
 
         # Dictionary to hold increments on prognos fields
+        # We need three increments for a third order Adams-Bashforth
         self.Inc = {}
+        self.IncOld = {}
+        self.IncOlder = {}
 
         # Initialize diagnostics
         self.compute(ForcedCompute=True)
@@ -72,6 +85,11 @@ class Component(object):
         """
         Updates component's diagnostics and increments
         """
+        # If this component can integrate, no need for computing
+        # increments
+        if self.CanIntegrate:
+            return
+            
         # See if it's time for an update; if not, skip rest
         if not ForcedCompute:
             freq = self.UpdateFreq
@@ -93,7 +111,7 @@ class Component(object):
         # List of arguments to be passed to extension
         args = [ Input[key] for key in self.ToExtension ]
 
-        # Call extension and build dictionary of ouputs
+        # Call extension and build dictionary of outputs
         OutputValues = self.driver(*args)
         if len(self.FromExtension) == 1: Output = {self.FromExtension[0]: OutputValues}
         else:                            Output = dict( zip(self.FromExtension, OutputValues ) )
@@ -129,7 +147,43 @@ class Component(object):
         if type(RunLength) is type(1.):
             NSteps = int(RunLength/self['dt'])
 
+
         for i in range(NSteps):
+        # If the component already has the capability to integrate,
+        # no need to call the integrator in State.advance
+            if self.CanIntegrate:
+                Input = []
+                InputTend = []
+                for key in self.Integrates:
+                    #print
+                    #print 'appending field: ', key
+                    #print 'of shape: ', self.State.Now[key].shape
+                    #print
+                    if key in self.State.Now:
+                        Input.append(self.State.Now[key])
+                    else:
+                        raise IndexError, '\n\n Required field ' + key + ' not present in State for integration'
+                    if key in Inc:
+                        InputTend.append(Inc.pop(key))
+                    else:
+                        InputTend.append(zeros(self.State.Now[key].shape))
+
+                #print
+                #print 'Input length to dycore: ', len(InputTend)
+                #print
+
+                OutputValues = self.integrate(Input,InputTend)
+
+                #print
+                #print 'Output length from dycore: ', len(OutputValues)
+                #print
+
+                if len(self.FromExtension) == 1: Output = {self.FromExtension[0]: OutputValues}
+                else:                            Output = dict( zip(self.FromExtension, OutputValues ) )
+                for key in self.Integrates:
+                    self.State.Now[key] = Output[key]
+
+
             # Add external increments
             for key in Inc.keys():
                 if key in self.Inc.keys():
