@@ -116,9 +116,9 @@ class dynamics(Component):
                 self.timestep = 1200.0
 
 
-            _gfsDycore = _gfs_dynamics(self.nlon,self.nlat, timestep=self.timestep);
-            _gfsDycore.initModel();
-            u,v,t,tr,ps,p = _gfsDycore.getResult();
+            _gfsDycore = _gfs_dynamics(self.nlon,self.nlat, timestep=self.timestep, climt_mode=True)
+            _gfsDycore.initModel()
+            u,v,t,tr,ps,p = _gfsDycore.getResult()
 
             args = {};
             args['p'] = p;
@@ -127,7 +127,10 @@ class dynamics(Component):
             args['V'] = v;
             args['theta'] = t;
             args['q'] = tr;
+            args['CanIntegrate'] = True
+            args['Integrates'] = ['U','V','theta','q','ps']
             args.update(kwargs)
+
             #print 'here'
         except: raise ImportError, \
           '\n \n ++++ CliMT.dynamics: Could not load GFS dynamical core'
@@ -136,14 +139,15 @@ class dynamics(Component):
         self.LevType        = 'p'
         self.Extension      = _gfsDycore
         self.driver         = _gfsDycore.driver
+        self.integrate      = _gfsDycore.integrateFields
         self.SteppingScheme = 'explicit'
-        self.ToExtension    = ['U','V','theta','q','ps','p']
-        self.FromExtension  = ['Uinc','Vinc','thetainc','qinc','psinc','pinc']
-        #self.FromExtension  = ['U','V','theta','q','ps','p']
-        self.Required       = ['U','V','theta','q','ps','p']
-        #self.Diagnostic     = ['U','V','theta','q','ps','p']
-        self.Diagnostic     = []
+        self.ToExtension    = ['U','V','theta','q','ps']
+        #self.FromExtension  = ['Uinc','Vinc','thetainc','qinc','psinc','pinc']
+        self.FromExtension  = ['U','V','theta','q','ps','p']
+        self.Required       = ['U','V','theta','q','ps']
+        self.Diagnostic     = ['p']
+        #self.Diagnostic     = []
         #self.Prognostic     = []
-        self.Prognostic     = ['U','V','theta','q','ps','p']
+        self.Prognostic     = ['U','V','theta','q','ps']
 
         return args;
