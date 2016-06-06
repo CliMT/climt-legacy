@@ -112,11 +112,13 @@ class State:
         '''
         # If there's nothing to forecast, advance time counter and skip rest
         if len(Component.Inc) == 0:
+            #print 'In state: Nothing to advance'
             self.ElapsedTime += Component['dt']
             return
 
         # Invoke compiled leapfrog scheme
         afc = Component['afc']
+
         for key in Component.Inc:
 
             Shape = self.Now[key].shape
@@ -157,6 +159,7 @@ class State:
 
         # Set fields' values to input or default
         Shape3D = self.Grid.Shape3D
+        print Shape3D, ' is the shape'
         Shape2D = Shape3D[:-1]
         for Field in FieldNames:
             exec('Shape = Shape%s' % KnownFields[Field][2])

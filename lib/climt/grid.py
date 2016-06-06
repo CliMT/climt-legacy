@@ -16,17 +16,19 @@ class Grid:
         # Get shape appropriate for component
         self.Shape3D = Component._getShape3D(**kwargs)
 
+        print 'in Grid init. Shape of ', Component.Name, ' is ', self.Shape3D
+
         # Levels
-        self.value['nlev'] = self.Shape3D[0]
+        self.value['nlev'] = self.Shape3D[2]
         self.long_name['lev'] = 'level'
         if Component.LevType == 'p':
-            self.long_name['lev'] = 'presssure'
+            self.long_name['lev'] = 'pressure'
             self.units['lev'] = 'mb'
         if Component.LevType is None: self.units['lev'] = '-'
         self._setAxis('lev', LevType=Component.LevType, **kwargs)
 
         # Latitude
-        self.value['nlat'] = self.Shape3D[0]
+        self.value['nlat'] = self.Shape3D[1]
         self.long_name['lat'] = 'latitude'
         self.units['lat'] = 'degrees'
         self._setAxis('lat', **kwargs)

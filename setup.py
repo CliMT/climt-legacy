@@ -63,7 +63,10 @@ Extensions = [
 #    {'name':'rrtm_radiation_fortran',
 #     'dir':'src/radiation/rrtm'},
     {'name':'gfs_dynamics',
-     'dir':'src/dynamics/gfs/gfs'}
+     'dir':'src/dynamics/gfs/gfs'},
+    {'name':'held_suarez',
+     'dir':'src/idealised/'
+    }
     ]
 
 # define extensions that will be built when the --lite option is used
@@ -188,7 +191,9 @@ def setupClimt():
     # Build all extensions
     for ext in Extensions: 
         if ext['name'] == 'gfs_dynamics' :
-            build_dycore(**ext);
+            build_dycore(**ext)
+        elif ext['name'] == 'held_suarez':
+                os.system('cp %s/held_suarez.py lib/climt' % ext['dir'])
         else:
             build_ext(**ext)
 
