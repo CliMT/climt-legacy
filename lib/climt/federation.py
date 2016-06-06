@@ -39,8 +39,8 @@ class federation(Component):
         '\n\n +++ CliMT.federation: you must give me more than 1 component to federate!\n\n'
         else:
             for component in components:
-                assert type(component) is InstanceType, \
-                '\n\n +++CliMT.federation: Input item %s is not an instance.\n\n' % str(c) 
+                assert isinstance(component, Component), \
+                '\n\n +++CliMT.federation: Input item %s is not an instance.\n\n' % str(component) 
                      
         # Re-order components: diagnostic, semi-implicit, explicit, implicit
         components = list(components)
@@ -64,6 +64,33 @@ class federation(Component):
             self.Required   = list(set(self.Required).union(component.Required))
             self.Prognostic = list(set(self.Prognostic).union(component.Prognostic))
             self.Diagnostic = list(set(self.Diagnostic).union(component.Diagnostic))
+
+        #Check if any components carry an integrator
+        self.Integrators = []
+        self.Integrates = []
+        self.FromExtension = []
+        for component in components:
+            if component.CanIntegrate:
+                self.CanIntegrate = component.CanIntegrate
+
+                common_fields = set(component.Integrates).intersection(self.Integrates)
+                if common_fields:
+                    # Two components are trying to integrate the same field.
+                    # don't allow
+                    raise IndexError, "\n\n Two components are trying to integrate the fields ",\
+                                                     common_fields
+
+                for field in component.Integrates:
+                    self.Integrates.append(field)
+
+                for field in component.FromExtension:
+                    self.FromExtension.append(field)
+
+                self.Integrators.append(component)
+                print component.Name, ' can integrate ', component.Integrates
+
+        print 'All fields integrated by federation members: ', self.Integrates
+        print 'All fields returned by federation members: ', self.FromExtension
 
         # Other attributes
         self.Name      = 'federation'
@@ -175,3 +202,32 @@ class federation(Component):
             # accumulate increments
             for key in component.Inc:
                 self.Inc[key] += component.Inc[key]
+
+    def integrate(self, field_list, increment_list):
+
+        Input = []
+        InputTend = []
+        Output = list(self.FromExtension)
+
+        for component in self.Integrators:
+
+            #print 'In Fed: ', component.Integrates
+
+            for field in component.Integrates:
+
+                index = self.Integrates.index(field)
+
+                Input.append(field_list[index])
+                InputTend.append(increment_list[index])
+
+            OutputValues = component.integrate(Input, InputTend)
+
+            for field in component.FromExtension:
+
+                fed_index = self.FromExtension.index(field)
+                comp_index = component.FromExtension.index(field)
+                #print 'In Fed: ', field, fed_index, comp_index
+
+                Output[fed_index] = OutputValues[comp_index]
+
+        return Output
