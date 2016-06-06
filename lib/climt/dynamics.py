@@ -2,6 +2,7 @@
 
 from component  import Component
 from numpy import *
+import numpy as np
 
 class dynamics(Component):
     """
@@ -120,13 +121,21 @@ class dynamics(Component):
             _gfsDycore.initModel()
             u,v,t,tr,ps,p = _gfsDycore.getResult()
 
-            args = {};
-            args['p'] = p;
-            args['ps'] = ps;
-            args['U'] = u;
-            args['V'] = v;
-            args['theta'] = t;
-            args['q'] = tr;
+            lats = np.asarray(_gfsDycore.latitudes)[0,:]
+            self.latitudes = np.degrees(lats)
+
+            args = {}
+
+            args['lat'] = lats
+            args['lon'] = np.linspace(0,360, _gfsDycore.numLons)
+            args['lev'] = np.linspace(1,0, _gfsDycore.numLevs)
+
+            args['p'] = p
+            args['ps'] = ps
+            args['U'] = u
+            args['V'] = v
+            args['theta'] = t
+            args['q'] = tr
             args['CanIntegrate'] = True
             args['Integrates'] = ['U','V','theta','q','ps']
             args.update(kwargs)
@@ -138,13 +147,13 @@ class dynamics(Component):
         self.Name           = 'gfs_dynamics'
         self.LevType        = 'p'
         self.Extension      = _gfsDycore
-        self.driver         = _gfsDycore.driver
+        #self.driver         = _gfsDycore.driver
         self.integrate      = _gfsDycore.integrateFields
         self.SteppingScheme = 'explicit'
         self.ToExtension    = ['U','V','theta','q','ps']
         #self.FromExtension  = ['Uinc','Vinc','thetainc','qinc','psinc','pinc']
         self.FromExtension  = ['U','V','theta','q','ps','p']
-        self.Required       = ['U','V','theta','q','ps']
+        self.Required       = ['U','V','theta','q','ps','p']
         self.Diagnostic     = ['p']
         #self.Diagnostic     = []
         #self.Prognostic     = []
