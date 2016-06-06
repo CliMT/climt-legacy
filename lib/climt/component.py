@@ -45,6 +45,8 @@ class Component(object):
                     raise IndexError, '\n\n CanIntegrate keyword must be accompanied by \
                         the Integrates keyword which provides a list of fields that this\
                         Component accepts for integration.'
+        else:
+            self.CanIntegrate = False
 
         # Initialize State
         self.State = State(self, **kwargs)
@@ -149,6 +151,15 @@ class Component(object):
 
 
         for i in range(NSteps):
+
+
+            # Add external increments
+            for key in Inc.keys():
+                if key in self.Inc.keys():
+                    self.Inc[key] += Inc[key]
+                else:
+                    self.Inc[key] = Inc[key]
+
         # If the component already has the capability to integrate,
         # no need to call the integrator in State.advance
             if self.CanIntegrate:
@@ -160,13 +171,24 @@ class Component(object):
                     #print 'of shape: ', self.State.Now[key].shape
                     #print
                     if key in self.State.Now:
-                        Input.append(self.State.Now[key])
+                        Input.append(self.State.Now[key].copy())
                     else:
                         raise IndexError, '\n\n Required field ' + key + ' not present in State for integration'
-                    if key in Inc:
-                        InputTend.append(Inc.pop(key))
-                    else:
-                        InputTend.append(zeros(self.State.Now[key].shape))
+
+                    temp = zeros(self.State.Now[key].shape)
+                    if key in self.Inc:
+                        #print key, ' tend found in self.Inc'
+                        temp = self.Inc.pop(key)
+
+                    #if key in Inc:
+                        #print key, ' tend found in Inc'
+                        #temp += Inc.pop(key)
+
+                    InputTend.append(temp)
+
+                    #else:
+                    #    print 'In Comp: no tendencies yet, putting zeros for :', key
+                    #    InputTend.append(zeros(self.State.Now[key].shape))
 
                 #print
                 #print 'Input length to dycore: ', len(InputTend)
@@ -177,19 +199,17 @@ class Component(object):
                 #print
                 #print 'Output length from dycore: ', len(OutputValues)
                 #print
+                #print self.FromExtension
+                #print self.Integrates
 
                 if len(self.FromExtension) == 1: Output = {self.FromExtension[0]: OutputValues}
                 else:                            Output = dict( zip(self.FromExtension, OutputValues ) )
-                for key in self.Integrates:
+
+                for key in self.FromExtension:
+                    #print key, Output[key].max()
                     self.State.Now[key] = Output[key]
 
 
-            # Add external increments
-            for key in Inc.keys():
-                if key in self.Inc.keys():
-                    self.Inc[key] += Inc[key]
-                else:
-                    self.Inc[key] = Inc[key]
             
             # Avance prognostics 1 time step
             self.State.advance(self)
