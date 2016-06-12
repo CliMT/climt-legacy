@@ -13,7 +13,8 @@ try:
     # gives right aspect ratio in subplots
     pylab.rcParams['image.aspect']='auto'
     # increase vertical gap between plots
-    pylab.rcParams['figure.subplot.hspace']=0.3
+    pylab.rcParams['figure.subplot.hspace']=0.4
+    pylab.rcParams['figure.subplot.wspace']=0.4
     # turn on interactive mode
     pylab.ion() 
     gotMatplotlib = True
@@ -134,10 +135,11 @@ class Monitor:
         for key in self.Figure.keys():
             Field = Component[key]
             Panel = self.Figure[key]
+            grid = Component.Grid
 
             # If Field is 3D, show zonal average
             if rank(Field) == 3:
-                Field = average(Field,axis=2)
+                Field = average(Field,axis=grid.grid_layout.index('lon'))
                 Field = squeeze(Field)
 
             # Reset data
@@ -153,9 +155,9 @@ class Monitor:
                     Panel.axes.set_ylim([MinVal, MaxVal])
             if rank(Field) == 2:
                 if Panel.orientation == 0:
-                    Panel.handle.set_data(Field[::-1])
+                    Panel.handle.set_data(Field.transpose()[::-1])
                 if Panel.orientation == 1:
-                    Panel.handle.set_data(Field)
+                    Panel.handle.set_data(Field.transpose())
                 # update normalization
                 Panel.handle.set_norm(None)
 
@@ -177,24 +179,28 @@ class Panel:
     def __init__(self, Component, FieldKey, Subplot):
         
         # get Field value
-        Field = Component.State[FieldKey]
+        plot_field = Component.State[FieldKey].copy()
         Dims  = KnownFields[FieldKey][2]
+
+        grid = Component.Grid
 
         # Figure out axes
         AxisKey = []
         if Dims == '2D':
             for i in range(2):
-                if shape(Field)[i] > 1: AxisKey.append(['lat','lon'][i])
+                if shape(plot_field)[i] > 1:
+                    AxisKey.append(grid.grid_layout[i])
         if Dims == '3D':
             for i in range(3):
-                if shape(Field)[i] > 1: AxisKey.append(['lev','lat','lon'][i])
+                if shape(plot_field)[i] > 1:
+                    AxisKey.append(grid.grid_layout[i])
 
         # If Field is 3D, show zonal average
-        Field = squeeze(Field)
-        if rank(Field) == 3:
-            Field = average(Field,axis=2)
-            Field = squeeze(Field)
-            AxisKey.pop(2)
+        plot_field = squeeze(plot_field)
+        if rank(plot_field) == 3:
+            plot_field = average(plot_field,axis=grid.grid_layout.index('lon'))
+            plot_field = squeeze(plot_field)
+            AxisKey.pop(grid.grid_layout.index('lon'))
 
         # Axes names and values
         AxisName = []
@@ -202,49 +208,50 @@ class Panel:
         for key in AxisKey:
             AxisName.append(Component.Grid.long_name[key])
             AxisVal.append(Component.Grid[key])
-        
+
         # Get handles to figure and properties
         if len(AxisName) == 1:
-            if min(Field) == max(Field) == 0.: Field=Field+1.e-7
-            MinVal = min(Field) - 0.01*abs(min(Field))
-            MaxVal = max(Field) + 0.01*abs(max(Field))
+            if min(plot_field) == max(plot_field) == 0.:
+                plot_field=plot_field+1.e-7
+            MinVal = min(plot_field) - 0.01*abs(min(plot_field))
+            MaxVal = max(plot_field) + 0.01*abs(max(plot_field))
             if AxisKey[0] == 'lev':
                 pylab.ylabel(AxisName[0])
                 self.orientation = 0
-                self.handle = pylab.plot(Field, AxisVal[0], 'bo-').pop(0)
+                self.handle = pylab.plot(plot_field, AxisVal[0], 'bo-').pop(0)
                 self.axes = pylab.gca()
                 pylab.xlim(MinVal, MaxVal)
                 pylab.ylim(AxisVal[0][-1], AxisVal[0][0] )
             else:
                 if Subplot in ['111','212','223','224']: pylab.xlabel(AxisName[0])
                 self.orientation = 1
-                self.handle = pylab.plot(AxisVal[0], Field, 'bo-').pop(0)
+                self.handle = pylab.plot(AxisVal[0], plot_field, 'bo-').pop(0)
                 self.axes = pylab.gca()
                 pylab.ylim([MinVal, MaxVal])
                 pylab.xlim([ AxisVal[0][0], AxisVal[0][-1] ])
 
         elif len(AxisName) == 2:
-            xmin = AxisVal[1][0]
-            xmax = AxisVal[1][-1]
-            ymin = AxisVal[0][0]
-            ymax = AxisVal[0][-1]
-            if AxisKey[0] == 'lev':
+            xmin = AxisVal[0][0]
+            xmax = AxisVal[0][-1]
+            ymin = AxisVal[1][0]
+            ymax = AxisVal[1][-1]
+            if AxisKey[1] == 'lev':
                self.orientation = 0
                self.handle = pylab.imshow(\
-                    Field[::-1],\
+                                          plot_field.transpose()[::-1],\
                     extent=(xmin, xmax, ymin, ymax),\
-                    interpolation='bilinear')
-               pylab.setp(pylab.gca(), 'xlim',[xmin,xmax], 'ylim',[ymax,ymin])
+                    interpolation='none', cmap='RdYlGn')
+               pylab.setp(pylab.gca(), 'xlim',[xmin,xmax], 'ylim',[ymin,ymax])
             else:
                self.orientation = 1
                self.handle = pylab.imshow( \
-                    Field, \
+                    plot_field.transpose(), \
                     extent=(xmin, xmax, ymin, ymax),\
-                    interpolation='bilinear')
+                    interpolation='none', cmap='RdYlGn')
                pylab.setp(pylab.gca(), 'xlim',[xmin,xmax], 'ylim',[ymin,ymax])
             # write x label only if subplot does not have other subplot underneath
-            if Subplot in ['111','212','223','224']: pylab.xlabel(AxisName[1])
-            pylab.ylabel(AxisName[0])
+            if Subplot in ['111','212','223','224']: pylab.xlabel(AxisName[0])
+            pylab.ylabel(AxisName[1])
             self.handle.set_norm(None)
 
         # Title
@@ -254,7 +261,7 @@ class Panel:
         try:
             TitleText = self.TitleTemplate % day
         except:
-            TitleText = self.TitleTemplate % (day, min(ravel(Field)), max(ravel(Field)))
+            TitleText = self.TitleTemplate % (day, min(ravel(plot_field)), max(ravel(plot_field)))
         self.title = pylab.title(TitleText)
         self.title.set_fontsize(12)
 
