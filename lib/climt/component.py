@@ -231,7 +231,8 @@ class Component(object):
             # Refresh monitor, if it's time to
             if self.Monitor.Monitoring:
                 freq = self.Monitor.MonitorFreq
-                if int(time/freq) != int((time-dt)/freq): self.Monitor.refresh(self)
+                if int(time/freq) != int((time-dt)/freq):
+                    self.Monitor.refresh(self)
         
     def __call__(self,**kwargs):
         """
