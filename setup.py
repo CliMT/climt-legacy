@@ -65,7 +65,9 @@ Extensions = [
     {'name':'gfs_dynamics',
      'dir':'src/dynamics/gfs/gfs'},
     {'name':'held_suarez',
-     'dir':'src/idealised/'
+     'dir':'src/idealised/'},
+    {'name':'dcmip',
+     'dir':'src/idealised/dcmip'
     }
     ]
 
@@ -180,12 +182,12 @@ def build_ext(name=None, dir=None, cppflags='', f77flags='', f90flags='', \
 def build_dycore(name=None, dir=None, cppflags='', f77flags='', f90flags='', \
               lib='', libdir='', incdir=''):
 
-    print dir;
-    os.chdir(dir);
+    print dir
+    os.chdir(dir)
 
-    os.system('make');
-    os.system('cp -f _%s.so ../../../../lib/climt/' % name);
-    os.chdir('../../../..');
+    os.system('make')
+    os.system('cp -f _%s.so ../../../../lib/climt/' % name)
+    os.chdir('../../../..')
 
 def setupClimt():
     # Build all extensions
@@ -194,6 +196,12 @@ def setupClimt():
             build_dycore(**ext)
         elif ext['name'] == 'held_suarez':
                 os.system('cp %s/held_suarez.py lib/climt' % ext['dir'])
+        elif ext['name'] == 'dcmip':
+                curr_folder = os.getcwd()
+                os.chdir(ext['dir'])
+                os.system('python setup.py build_ext --inplace')
+                os.chdir(curr_folder)
+                os.system('cp %s/dcmip.so lib/climt' % ext['dir'])
         else:
             build_ext(**ext)
 
