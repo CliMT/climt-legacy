@@ -134,10 +134,10 @@ class dynamics(Component):
             args['ps'] = ps
             args['U'] = u
             args['V'] = v
-            args['theta'] = t
+            args['T'] = t
             args['q'] = tr
             args['CanIntegrate'] = True
-            args['Integrates'] = ['U','V','theta','q','ps']
+            args['Integrates'] = ['U','V','T','q','ps']
             args.update(kwargs)
 
             #print 'here'
@@ -150,13 +150,10 @@ class dynamics(Component):
         #self.driver         = _gfsDycore.driver
         self.integrate      = _gfsDycore.integrateFields
         self.SteppingScheme = 'explicit'
-        self.ToExtension    = ['U','V','theta','q','ps']
-        #self.FromExtension  = ['Uinc','Vinc','thetainc','qinc','psinc','pinc']
-        self.FromExtension  = ['U','V','theta','q','ps','p']
-        self.Required       = ['U','V','theta','q','ps','p']
+        self.ToExtension    = ['U','V','T','q','ps']
+        self.FromExtension  = ['U','V','T','q','ps','p']
+        self.Required       = ['U','V','T','q','ps','p']
         self.Diagnostic     = ['p']
-        #self.Diagnostic     = []
-        #self.Prognostic     = []
-        self.Prognostic     = ['U','V','theta','q','ps']
+        self.Prognostic     = ['U','V','T','q','ps']
 
         return args
