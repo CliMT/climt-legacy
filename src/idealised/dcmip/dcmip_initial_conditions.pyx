@@ -14,13 +14,24 @@ cdef extern:
                              double * rho, double *q,\
                              double * q1, double *q2, int* perturb)
 
+#the initial conditions for the tropical cyclone test
+cdef extern:
+    void dcmipTropicalCyclone(double *lon, double *lat,\
+                             double *p, double *z,\
+                             int *zcoords,\
+                             double * u, double * v,\
+                             double * w, double * t,\
+                             double * phis, double *ps,\
+                             double * rho, double *q)
+
+
 #What we are sending to the code
 cdef double latitude, longitude, pressure
 cdef int moist
 cdef int add_perturbation
 
 #What we want from the code
-cdef double u, v, t, phis
+cdef double u, v, t, phis, ps, q
 
 #What we dont care about
 cdef double dummy, X
@@ -84,3 +95,48 @@ def getBaroclinicWaveICs(press, lon, lat, **kwargs):
                 surf_geop[i,j] = phis
 
     return zonal_vel, merid_vel, temperature, surf_geop
+
+def getTropicalCycloneICs(press, lon, lat, **kwargs):
+    '''
+    Provides the initial conditions to run the DCMIP baroclinic
+    wave test
+
+    '''
+
+    global longitude, latitude, pressure, zcoords
+
+    num_lons, num_lats, num_levs = press.shape
+
+    zonal_vel = np.zeros(press.shape, dtype=np.double, order='F')
+    merid_vel = np.zeros(press.shape, dtype=np.double, order='F')
+    temperature = np.zeros(press.shape, dtype=np.double, order='F')
+    surf_pressure = np.zeros(press.shape, dtype=np.double, order='F')
+    vapour = np.zeros(press.shape, dtype=np.double, order='F')
+    surf_geop = np.zeros((num_lons,num_lats), dtype=np.double, order='F')
+
+    # This makes the code evaluate eta using the pressure.
+    zcoords = 0
+
+    # lat-lon in RADIANS!!
+
+    for i in range(num_lons):
+        for j in range(num_lats):
+            for k in range(num_levs):
+                longitude = lon[i,j]
+                latitude = lat[i,j]
+                pressure = press[i,j,k]
+                dcmipTropicalCyclone(&longitude, &latitude,\
+                                    &pressure, &dummy,\
+                                    &zcoords, \
+                                    &u, &v,\
+                                    &dummy, &t,\
+                                    &phis, &ps,\
+                                    &dummy, &q)
+                zonal_vel[i,j,k] = u
+                merid_vel[i,j,k] = v
+                temperature[i,j,k] = t
+                vapour[i,j,k] = t
+                surf_geop[i,j] = phis
+                surf_pressure[i,j] = phis
+
+    return zonal_vel, merid_vel, temperature, vapour, surf_geop, surf_pressure
