@@ -9,6 +9,9 @@ from os import system
 fortran_mod_comp = 'gfortran dcmip_initial_conditions_test_4_v3.f90 -c -o dcmip_test4.o -O3 -fPIC'
 print fortran_mod_comp
 system(fortran_mod_comp)
+fortran_mod_comp = 'gfortran dcmip_initial_conditions_test_5_v1.f90 -c -o dcmip_test5.o -O3 -fPIC'
+print fortran_mod_comp
+system(fortran_mod_comp)
 
 ext_modules = [Extension(# module name:
                          'dcmip',
@@ -17,7 +20,7 @@ ext_modules = [Extension(# module name:
                          # other compile args for gcc
                          extra_compile_args=['-fPIC', '-O3'],
                          # other files to link to
-                         extra_link_args=['dcmip_test4.o'])]
+                         extra_link_args=['dcmip_test4.o','dcmip_test5.o'])]
 
 setup(name = 'dcmip',
       cmdclass = {'build_ext': build_ext},

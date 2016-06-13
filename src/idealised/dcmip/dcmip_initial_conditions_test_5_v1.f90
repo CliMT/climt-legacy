@@ -32,6 +32,8 @@ MODULE dcmip_initial_conditions_test_5
   !
   !=======================================================================
 
+!JOY added required module for c binding
+  use iso_c_binding
   IMPLICIT NONE
 
 !-----------------------------------------------------------------------
@@ -84,7 +86,9 @@ CONTAINS
 ! TEST CASE 5 - Tropical Cyclone 
 !==========================================================================================
 
-SUBROUTINE test5_tropical_cyclone (lon,lat,p,z,zcoords,u,v,w,t,phis,ps,rho,q)
+!JOY added bind to subroutine
+SUBROUTINE test5_tropical_cyclone (lon,lat,p,z,zcoords,u,v,w,t,phis,ps,rho,q)&
+        bind(c,name='dcmipTropicalCyclone')
 
 IMPLICIT NONE
 
