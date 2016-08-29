@@ -18,9 +18,9 @@ ext_modules = [Extension(# module name:
                          # source file:
                          ['dcmip_initial_conditions.pyx'],
                          # other compile args for gcc
-                         extra_compile_args=['-fPIC', '-O3'],
+                         extra_compile_args=['-fPIC', '-O3', '-lgfortran'],
                          # other files to link to
-                         extra_link_args=['dcmip_test4.o','dcmip_test5.o'])]
+                         extra_link_args=['dcmip_test4.o','dcmip_test5.o', '-lgfortran'])]
 
 setup(name = 'dcmip',
       cmdclass = {'build_ext': build_ext},

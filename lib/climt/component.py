@@ -5,7 +5,7 @@ from parameters import Parameters
 from state      import State, KnownFields
 from plot       import Monitor, Plot
 from inout      import IO
-from utils      import squeeze
+#from utils      import squeeze
 from _grid      import get_nlev, get_nlat, get_nlon
 
 class Component(object):
@@ -51,6 +51,7 @@ class Component(object):
         # Initialize State
         self.State = State(self, **kwargs)
         self.Grid = self.State.Grid
+        if 'grid' in kwargs: kwargs.pop('grid')
 
         # Dictionary to hold increments on prognos fields
         # We need three increments for a third order Adams-Bashforth
@@ -166,10 +167,7 @@ class Component(object):
                 Input = []
                 InputTend = []
                 for key in self.Integrates:
-                    #print
-                    #print 'appending field: ', key
-                    #print 'of shape: ', self.State.Now[key].shape
-                    #print
+
                     if key in self.State.Now:
                         Input.append(self.State.Now[key].copy())
                     else:
@@ -177,36 +175,18 @@ class Component(object):
 
                     temp = zeros(self.State.Now[key].shape)
                     if key in self.Inc:
-                        #print key, ' tend found in self.Inc'
                         temp = self.Inc.pop(key)
 
-                    #if key in Inc:
-                        #print key, ' tend found in Inc'
-                        #temp += Inc.pop(key)
 
                     InputTend.append(temp)
 
-                    #else:
-                    #    print 'In Comp: no tendencies yet, putting zeros for :', key
-                    #    InputTend.append(zeros(self.State.Now[key].shape))
-
-                #print
-                #print 'Input length to dycore: ', len(InputTend)
-                #print
 
                 OutputValues = self.integrate(Input,InputTend)
-
-                #print
-                #print 'Output length from dycore: ', len(OutputValues)
-                #print
-                #print self.FromExtension
-                #print self.Integrates
 
                 if len(self.FromExtension) == 1: Output = {self.FromExtension[0]: OutputValues}
                 else:                            Output = dict( zip(self.FromExtension, OutputValues ) )
 
                 for key in self.FromExtension:
-                    #print key, Output[key].max()
                     self.State.Now[key] = Output[key]
 
 
@@ -226,7 +206,8 @@ class Component(object):
             dt   = self.Params['dt']
             time = self.State.ElapsedTime
             freq = self.Io.OutputFreq
-            if int(time/freq) != int((time-dt)/freq): self.write()
+            if int(time/freq) != int((time-dt)/freq):
+                self.write()
 
             # Refresh monitor, if it's time to
             if self.Monitor.Monitoring:
@@ -319,6 +300,12 @@ class Component(object):
                 self._getAxisLength('lat', **kwargs),
                 self._getAxisLength('lev', **kwargs))
 
+    def getGrid(self):
+        '''
+        Returns Grid shape for external purposes, after init
+        '''
+
+        return self.Grid
 
     def _getAxisLength(self, AxisName, **kwargs):
         '''
@@ -331,10 +318,10 @@ class Component(object):
         # See if axis was supplied in input
         n = None
         if AxisName in kwargs:
-            if rank(array(kwargs[AxisName])) == 0:
+            if array(kwargs[AxisName]).ndim == 0:
                 n = 1
             else:
-                assert rank(array(kwargs[AxisName])) == 1, \
+                assert array(kwargs[AxisName]).ndim == 1, \
                     '\n\n ++++ CliMT.%s.init: input %s must be rank 1' % (self.Name,AxisName)
                 n = len(array(kwargs[AxisName]))
 
@@ -369,8 +356,8 @@ class Component(object):
     def __getitem__(self, key):
         for obj in [self.Params, self.Grid, self.State]:
             if key in obj:
-                if type(obj[key]) is type('string'): return obj[key]
-                else: return squeeze(obj[key])
+                if isinstance(obj[key], basestring): return obj[key]
+                else: return squeeze(obj[key]).copy()
         raise IndexError,'\n\n CliMT.State: %s not in Params, Grid or State' % str(key)
 
     # Sets requested quantity in Params, Grid or State

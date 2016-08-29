@@ -110,9 +110,9 @@ def getTropicalCycloneICs(press, lon, lat, **kwargs):
     zonal_vel = np.zeros(press.shape, dtype=np.double, order='F')
     merid_vel = np.zeros(press.shape, dtype=np.double, order='F')
     temperature = np.zeros(press.shape, dtype=np.double, order='F')
-    surf_pressure = np.zeros(press.shape, dtype=np.double, order='F')
     vapour = np.zeros(press.shape, dtype=np.double, order='F')
     surf_geop = np.zeros((num_lons,num_lats), dtype=np.double, order='F')
+    surf_pressure = np.zeros((num_lons,num_lats), dtype=np.double, order='F')
 
     # This makes the code evaluate eta using the pressure.
     zcoords = 0
@@ -135,8 +135,8 @@ def getTropicalCycloneICs(press, lon, lat, **kwargs):
                 zonal_vel[i,j,k] = u
                 merid_vel[i,j,k] = v
                 temperature[i,j,k] = t
-                vapour[i,j,k] = t
+                vapour[i,j,k] = q
                 surf_geop[i,j] = phis
-                surf_pressure[i,j] = phis
+                surf_pressure[i,j] = ps
 
     return zonal_vel, merid_vel, temperature, vapour, surf_geop, surf_pressure

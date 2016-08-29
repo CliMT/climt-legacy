@@ -17,7 +17,7 @@ class Grid:
         # Get shape appropriate for component
         self.Shape3D = Component._getShape3D(**kwargs)
 
-        print 'in Grid init. Shape of ', Component.Name, ' is ', self.Shape3D
+        #print 'in Grid init. Shape of ', Component.Name, ' is ', self.Shape3D
 
         # Levels
         self.value['nlev'] = self.Shape3D[self.grid_layout.index('lev')]

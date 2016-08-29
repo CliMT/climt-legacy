@@ -99,7 +99,7 @@ class Monitor:
         for key in self.FieldKeys:
             assert key in Component.State, \
                    '\n\n ++++ CliMT.monitor: %s not in component' % key
-            if rank(Component[key]) == 0:
+            if Component[key].ndim == 0:
                 print '\n\n ++++ CliMT.monitor: WARNING: cannot '\
                       +'monitor scalar variable %s' % key
                 self.FieldKeys.pop(self.FieldKeys.index(key))
@@ -138,12 +138,12 @@ class Monitor:
             grid = Component.Grid
 
             # If Field is 3D, show zonal average
-            if rank(Field) == 3:
+            if Field.ndim == 3:
                 Field = average(Field,axis=grid.grid_layout.index('lon'))
                 Field = squeeze(Field)
 
             # Reset data
-            if rank(Field) == 1:
+            if Field.ndim == 1:
                 if min(Field) == max(Field) == 0.: Field=Field+1.e-7
                 MinVal = min(Field) - 0.01*abs(min(Field))
                 MaxVal = max(Field) + 0.01*abs(max(Field))
@@ -153,7 +153,7 @@ class Monitor:
                 else:
                     Panel.handle.set_ydata(Field)
                     Panel.axes.set_ylim([MinVal, MaxVal])
-            if rank(Field) == 2:
+            if Field.ndim == 2:
                 if Panel.orientation == 0:
                     Panel.handle.set_data(Field.transpose()[::-1])
                 if Panel.orientation == 1:
@@ -197,7 +197,7 @@ class Panel:
 
         # If Field is 3D, show zonal average
         plot_field = squeeze(plot_field)
-        if rank(plot_field) == 3:
+        if plot_field.ndim == 3:
             plot_field = average(plot_field,axis=grid.grid_layout.index('lon'))
             plot_field = squeeze(plot_field)
             AxisKey.pop(grid.grid_layout.index('lon'))

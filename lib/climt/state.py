@@ -31,6 +31,7 @@ KnownFields = {
     'precc': ['convective precip rate', 'mm day-1', '2D'],
     'Tsdot': ['surface heating rate', 'K s-1', '2D'],
     'p': ['atmospheric pressure', 'mb', '3D'],
+    'pint': ['atmospheric pressure at the inteface', 'mb', '3D'],
     'dp': ['level thickness', 'mb', '3D'],
     'T': ['atmospheric temperature', 'K', '3D'],
     'theta': ['potential temperature', 'K', '3D'],
@@ -98,7 +99,10 @@ class State:
             self.ElapsedTime = 0.
 
         # Initialize grid
-        self.Grid = Grid(Component, **kwargs)
+        if 'grid' in kwargs:
+            self.Grid = kwargs.pop('grid')
+        else:
+            self.Grid = Grid(Component, **kwargs)
         
         # Initialize Required fields
         self._initializeFields(Component, **kwargs)
@@ -159,7 +163,7 @@ class State:
 
         # Set fields' values to input or default
         Shape3D = self.Grid.Shape3D
-        print Shape3D, ' is the shape'
+        #print Shape3D, ' is the shape'
         Shape2D = Shape3D[:-1]
         for Field in FieldNames:
             exec('Shape = Shape%s' % KnownFields[Field][2])

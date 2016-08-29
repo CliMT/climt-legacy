@@ -120,6 +120,8 @@ class federation(Component):
         # Initialize State
         self.State = State(self, **kwargs)
         self.Grid = self.State.Grid
+        if 'grid' in kwargs:
+            self.Grid = kwargs.pop('grid')
 
         # Set some redundant attributes (mainly for backward compatibility)
         self.nlon = self.Grid['nlon']
@@ -128,8 +130,11 @@ class federation(Component):
         try: self.o3 = self.State['o3']
         except: pass
 
+        self.componentGrids = []
         # Check if components enforce axis dimensions, ensure consistency
         for component in self.components:
+            if component.Grid not in self.componentGrids:
+                self.componentGrids.append(component.Grid)
             for AxisName in ['lev','lat','lon']:
                 exec('n_fed = self.n%s' % AxisName)
                 try: exec('n_com = component.Extension.get_n%s()' % AxisName)

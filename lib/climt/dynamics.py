@@ -119,18 +119,18 @@ class dynamics(Component):
 
             _gfsDycore = _gfs_dynamics(self.nlon,self.nlat, timestep=self.timestep, climt_mode=True)
             _gfsDycore.initModel()
-            u,v,t,tr,ps,p = _gfsDycore.getResult()
+            u,v,t,tr,ps,p,pint = _gfsDycore.getResult()
 
             lats = np.asarray(_gfsDycore.latitudes)[0,:]
-            self.latitudes = np.degrees(lats)
 
             args = {}
 
             args['lat'] = lats
             args['lon'] = np.linspace(0,360, _gfsDycore.numLons)
-            args['lev'] = np.linspace(1,0, _gfsDycore.numLevs)
+            args['lev'] = 100000*np.linspace(1,0.003, _gfsDycore.numLevs)
 
             args['p'] = p
+            args['pint'] = pint
             args['ps'] = ps
             args['U'] = u
             args['V'] = v
@@ -151,9 +151,9 @@ class dynamics(Component):
         self.integrate      = _gfsDycore.integrateFields
         self.SteppingScheme = 'explicit'
         self.ToExtension    = ['U','V','T','q','ps']
-        self.FromExtension  = ['U','V','T','q','ps','p']
+        self.FromExtension  = ['U','V','T','q','ps','p','pint']
         self.Required       = ['U','V','T','q','ps','p']
-        self.Diagnostic     = ['p']
+        self.Diagnostic     = ['p','pint']
         self.Prognostic     = ['U','V','T','q','ps']
 
         return args

@@ -196,8 +196,8 @@ class IO:
             var.units     = State.Grid.units[key]
             var[:]        = State.Grid[key]
         # Create output fields
-        axes2D = ('time','lat','lon')
-        axes3D = ('time','lev','lat','lon')
+        axes2D = ('time','lon','lat')
+        axes3D = ('time','lon','lat','lev')
         for key in self.AllFields:
             exec('axes = axes%s' % KnownFields[key][2])
             var = createVariable(key, 'f', axes)
@@ -208,7 +208,7 @@ class IO:
 
     def writeOutput(self, Params, State):
         """
-        """            
+        """
         if not gotNetCDF or not self.DoingOutput: return
 
         # Open file
@@ -216,7 +216,9 @@ class IO:
 
         # Decide what we're going to output
         if State.ElapsedTime == 0. or self.OutputFieldNames == None:
-            OutputFieldNames = self.AllFields
+            #For now, until we figure this out
+            #OutputFieldNames = self.AllFields
+            OutputFieldNames = State.keys()
         else:
             OutputFieldNames = self.OutputFieldNames
 
@@ -229,7 +231,7 @@ class IO:
                 File.variables[key][self.OutputTimeIndex,:,:] = out[:,:].astype('f')
             if KnownFields[key][2] == '3D':
                 out = State[key].copy()
-                out = out[nlev-1::-1,:,:]
+                out = out[:,:,nlev-1::-1]
                 File.variables[key][self.OutputTimeIndex,:,:,:] = out[:,:,:].astype('f')
 
         # Write time
