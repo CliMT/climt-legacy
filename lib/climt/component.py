@@ -357,7 +357,7 @@ class Component(object):
         for obj in [self.Params, self.Grid, self.State]:
             if key in obj:
                 if isinstance(obj[key], basestring): return obj[key]
-                else: return squeeze(obj[key]).copy()
+                else: return squeeze(obj[key]).copy(order='F')
         raise IndexError,'\n\n CliMT.State: %s not in Params, Grid or State' % str(key)
 
     # Sets requested quantity in Params, Grid or State

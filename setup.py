@@ -66,6 +66,8 @@ Extensions = [
      'dir':'src/dynamics/gfs/gfs'},
     {'name':'held_suarez',
      'dir':'src/idealised/'},
+    {'name':'simple_physics',
+     'dir':'src/idealised/simple_physics'},
     {'name':'dcmip',
      'dir':'src/idealised/dcmip'
     }
@@ -202,6 +204,13 @@ def setupClimt():
                 os.system('python setup.py build_ext --inplace')
                 os.chdir(curr_folder)
                 os.system('cp %s/dcmip.so lib/climt' % ext['dir'])
+        elif ext['name'] == 'simple_physics':
+                curr_folder = os.getcwd()
+                os.chdir(ext['dir'])
+                os.system('rm _simple_physics.c')
+                os.system('python setup.py build_ext --inplace')
+                os.chdir(curr_folder)
+                os.system('cp %s/_simple_physics.so %s/simple_physics.py lib/climt' %(ext['dir'],ext['dir']))
         else:
             build_ext(**ext)
 

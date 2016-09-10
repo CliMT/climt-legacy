@@ -168,9 +168,13 @@ class State:
         for Field in FieldNames:
             exec('Shape = Shape%s' % KnownFields[Field][2])
             if Field in kwargs:
-                try: self.Now[Field] = reshape( array(kwargs[Field]), Shape )
-                except: raise \
-                      '\n\n ++++ CliMT.State.init: Input %s incorrectly dimensioned' % Field
+                #TODO BAD BAD BAD hack.
+                if Field is 'pint':
+                    self.Now[Field] = array(kwargs[Field])
+                else:
+                    try: self.Now[Field] = reshape( array(kwargs[Field]), Shape )
+                    except: raise \
+                          '\n\n ++++ CliMT.State.init: Input %s incorrectly dimensioned' % Field
             else:
                 self.Now[Field] = self._getDefault(Field, Shape, **kwargs)
 
@@ -212,6 +216,11 @@ class State:
 
         # Surface pressure
         if 'ps' == Field: return zeros(Shape,'d') + 1000.
+
+        # Surface pressure
+        if 'pint' == Field:
+            newShape = [Shape[0], Shape[1], Shape[2]+1]
+            return zeros(newShape,'d') + 1000.
 
         # Surface geopotential
         if 'z0' == Field: return zeros(Shape,'d')

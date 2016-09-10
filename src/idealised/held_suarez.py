@@ -136,6 +136,9 @@ class held_suarez(Component):
 
 
     def driver(self, u, v, temp, q, surf_press, press, simTime=-1):
+        '''
+        Provides the tendency terms for a Held-Suarez physics based simulation.
+        '''
 
         dt = self.UpdateFreq
         lats = self.Grid['lat']

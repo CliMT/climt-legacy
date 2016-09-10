@@ -122,11 +122,12 @@ class dynamics(Component):
             u,v,t,tr,ps,p,pint = _gfsDycore.getResult()
 
             lats = np.asarray(_gfsDycore.latitudes)[0,:]
+            lons = np.asarray(_gfsDycore.longitudes)[:,0]
 
             args = {}
 
             args['lat'] = lats
-            args['lon'] = np.linspace(0,360, _gfsDycore.numLons)
+            args['lon'] = lons
             args['lev'] = 100000*np.linspace(1,0.003, _gfsDycore.numLevs)
 
             args['p'] = p
@@ -140,9 +141,8 @@ class dynamics(Component):
             args['Integrates'] = ['U','V','T','q','ps']
             args.update(kwargs)
 
-            #print 'here'
         except: raise ImportError, \
-          '\n \n ++++ CliMT.dynamics: Could not load GFS dynamical core'
+         '\n \n ++++ CliMT.dynamics: Could not load GFS dynamical core'
         # Define some attributes
         self.Name           = 'gfs_dynamics'
         self.LevType        = 'p'
@@ -152,7 +152,7 @@ class dynamics(Component):
         self.SteppingScheme = 'explicit'
         self.ToExtension    = ['U','V','T','q','ps']
         self.FromExtension  = ['U','V','T','q','ps','p','pint']
-        self.Required       = ['U','V','T','q','ps','p']
+        self.Required       = ['U','V','T','q','ps','p','pint']
         self.Diagnostic     = ['p','pint']
         self.Prognostic     = ['U','V','T','q','ps']
 
