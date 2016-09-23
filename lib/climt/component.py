@@ -109,7 +109,7 @@ class Component(object):
 
         # For semimplicit time stepping, append previous (old) time level to Input dict
         if self.SteppingScheme == 'semi-implicit':
-            for key in self.Prognostic: Input[key+'old'] = self.State.Old[key]        
+            for key in self.Prognostic: Input[key+'old'] = self.State.Old[key]
 
         # List of arguments to be passed to extension
         args = [ Input[key] for key in self.ToExtension ]

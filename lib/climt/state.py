@@ -77,7 +77,7 @@ KnownFields = {
 
 
 import os
-from numpy import *
+import numpy as np
 from grid      import Grid
 from _timestep import adams_bashforth
 
@@ -131,17 +131,17 @@ class State:
                 
             if key not in Component.IncOld.keys():
                 print 'initialising incOld'
-                Component.IncOld[key] = zeros(Shape)
+                Component.IncOld[key] = np.zeros(Shape)
 
             if key not in Component.IncOlder.keys():
                 print 'initialising incOlder'
-                Component.IncOlder[key] = zeros(Shape)
+                Component.IncOlder[key] = np.zeros(Shape)
 
             self.Now[key] = \
                adams_bashforth(Component.Inc[key], Component.IncOld[key],\
                                Component.IncOlder[key], self.Now[key])
             # make sure array shape is unchanged 
-            for dic in [self.Now]: dic[key] = reshape(dic[key],Shape)
+            for dic in [self.Now]: dic[key] = np.reshape(dic[key],Shape)
 
             #Propagate increments backwards in time
             Component.IncOlder[key] = Component.IncOld[key].copy()
@@ -170,9 +170,9 @@ class State:
             if Field in kwargs:
                 #TODO BAD BAD BAD hack.
                 if Field is 'pint':
-                    self.Now[Field] = array(kwargs[Field])
+                    self.Now[Field] = np.array(kwargs[Field])
                 else:
-                    try: self.Now[Field] = reshape( array(kwargs[Field]), Shape )
+                    try: self.Now[Field] = np.reshape( np.array(kwargs[Field]), Shape )
                     except: raise \
                           '\n\n ++++ CliMT.State.init: Input %s incorrectly dimensioned' % Field
             else:
@@ -180,16 +180,17 @@ class State:
 
         # Catch some anomalous cases
         if 'p' in FieldNames and 'p' not in kwargs and LevType == 'p':
-            self.Now['p'] = transpose(resize(self.Grid['lev'],Shape3D[::-1]))
+            self.Now['p'] = np.resize(self.Grid['lev'],Shape3D)
 
+        '''
         if 'ps' in FieldNames and 'ps' not in kwargs:
             if 'p' in self.Now:
                 dp = self.Now['p'][:,:,-1] - self.Now['p'][:,:,-2]
                 self.Now['ps'] = self.Now['p'][:,:,-1] + dp/2.
             elif LevType == 'p':
                 dp = self.Grid['lev'][-1] - self.Grid['lev'][-2]
-                self.Now['ps'] = zeros(Shape2D,'d') + self.Grid['lev'][-1] + dp/2.
-
+                self.Now['ps'] = np.zeros(Shape2D,'d') + self.Grid['lev'][-1] + dp/2.
+        '''
         #if 'Ts' in FieldNames and 'Ts' not in kwargs and 'T' in self.Now:
         #        self.Now['Ts'] = reshape( self.Now['T'][-1], Shape2D )
 
@@ -208,46 +209,57 @@ class State:
         # Pressure
         if 'p' == Field:
             nlev = Shape[-1]
-            lev = (arange(nlev)+0.5) * 1000./nlev
-            return transpose(resize(lev,Shape[::-1]))
+            lev = (np.arange(nlev)+0.5)[::-1] * 100000./nlev
+            return np.resize(lev,Shape)
 
         # Level thickness
-        if 'dp' == Field: return zeros(Shape,'d') -99. # set as missing
+        if 'dp' == Field: return np.zeros(Shape,'d') -99. # set as missing
 
         # Surface pressure
-        if 'ps' == Field: return zeros(Shape,'d') + 1000.
+        if 'ps' == Field: return np.zeros(Shape,'d') + 100000.
 
         # Surface pressure
         if 'pint' == Field:
+            if 'p' not in self.Now.keys():
+                self._getDefault('p', Shape, **kwargs)
+            if 'ps' not in self.Now.keys():
+                self._getDefault('ps', Shape, **kwargs)
+
+            press = self.Now['p']
             newShape = [Shape[0], Shape[1], Shape[2]+1]
-            return zeros(newShape,'d') + 1000.
+
+            temp = np.zeros(newShape,'d')
+            temp[:,:,1:-1] = (press[:,:,0:-1] + press[:,:,1::])/2.
+            temp[:,:,0] = self.Now['ps']
+            temp[:,:,-1] = 0
+            return temp
 
         # Surface geopotential
-        if 'z0' == Field: return zeros(Shape,'d')
+        if 'z0' == Field: return np.zeros(Shape,'d')
 
         # Zonal wind
-        if 'U' == Field: return zeros(Shape,'d')
+        if 'U' == Field: return np.zeros(Shape,'d')
 
         # Meridional wind
-        if 'V' == Field: return zeros(Shape,'d')
+        if 'V' == Field: return np.zeros(Shape,'d')
 
         # Meridional streamfunc
-        if 'psi' == Field: return zeros(Shape,'d')
+        if 'psi' == Field: return np.zeros(Shape,'d')
 
         # Temperature
-        if 'T' == Field: return zeros(Shape,'d') + 283.15
+        if 'T' == Field: return np.zeros(Shape,'d') + 283.15
 
         # Potential temperature
-        if 'theta' == Field: return zeros(Shape,'d') + 283.15
+        if 'theta' == Field: return np.zeros(Shape,'d') + 283.15
 
         # Surface temperature
-        if 'Ts' == Field: return zeros(Shape,'d') + 283.15
+        if 'Ts' == Field: return np.zeros(Shape,'d') + 283.15
 
         # Sea ice
-        if 'hIce' == Field: return zeros(Shape,'d')
+        if 'hIce' == Field: return np.zeros(Shape,'d')
 
         # Moisture
-        if 'q' == Field: return zeros(Shape,'d') + 1.e-5
+        if 'q' == Field: return np.zeros(Shape,'d') + 1.e-5
 
         # Ozone
         if 'o3' == Field: 
@@ -259,15 +271,15 @@ class State:
             return ozone.State['o3']
 
         # Cloud frac
-        if 'cldf' == Field: return zeros(Shape,'d')
+        if 'cldf' == Field: return np.zeros(Shape,'d')
 
         # Cloud water path
-        if 'clwp' == Field: return zeros(Shape,'d')
-        if 'ciwp' == Field: return zeros(Shape,'d') -99. # set as missing by default
+        if 'clwp' == Field: return np.zeros(Shape,'d')
+        if 'ciwp' == Field: return np.zeros(Shape,'d') -99. # set as missing by default
 
         # Effective radius cloud drops
-        if 'r_liq' == Field: return zeros(Shape,'d') + 10.
-        if 'r_ice' == Field: return zeros(Shape,'d') + 30.
+        if 'r_liq' == Field: return np.zeros(Shape,'d') + 10.
+        if 'r_ice' == Field: return np.zeros(Shape,'d') + 30.
 
         # Insolation
         if 'zen' == Field or 'solin' == Field:
@@ -282,22 +294,22 @@ class State:
         if 'solin' == Field: return insolation.State['solin']
 
         # Surface upwelling LW
-        if 'flus' == Field: return zeros(Shape,'d') -99. # set to missing as default
+        if 'flus' == Field: return np.zeros(Shape,'d') -99. # set to missing as default
 
         # Albedos
-        if 'asdir' == Field: return zeros(Shape,'d') + 0.07
-        if 'asdif' == Field: return zeros(Shape,'d') + 0.07
-        if 'aldir' == Field: return zeros(Shape,'d') + 0.07
-        if 'aldif' == Field: return zeros(Shape,'d') + 0.07
+        if 'asdir' == Field: return np.zeros(Shape,'d') + 0.07
+        if 'asdif' == Field: return np.zeros(Shape,'d') + 0.07
+        if 'aldir' == Field: return np.zeros(Shape,'d') + 0.07
+        if 'aldif' == Field: return np.zeros(Shape,'d') + 0.07
 
         # Surface fluxes
-        if 'SrfRadFlx' == Field: return zeros(Shape,'d')
-        if 'SrfLatFlx' == Field: return zeros(Shape,'d')
-        if 'SrfSenFlx' == Field: return zeros(Shape,'d')
-        if 'Qflx'      == Field: return zeros(Shape,'d')
+        if 'SrfRadFlx' == Field: return np.zeros(Shape,'d')
+        if 'SrfLatFlx' == Field: return np.zeros(Shape,'d')
+        if 'SrfSenFlx' == Field: return np.zeros(Shape,'d')
+        if 'Qflx'      == Field: return np.zeros(Shape,'d')
 
         # Cloud-base mass flux (required for Emanuel convection scheme)
-        if 'cbmf' == Field: return zeros(Shape,'d')
+        if 'cbmf' == Field: return np.zeros(Shape,'d')
 
     # The following methods allow a State instance to be treated as a dictionary
     def __getitem__(self,key):

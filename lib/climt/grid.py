@@ -24,7 +24,7 @@ class Grid:
         self.long_name['lev'] = 'level'
         if Component.LevType == 'p':
             self.long_name['lev'] = 'pressure'
-            self.units['lev'] = 'mb'
+            self.units['lev'] = 'Pa'
         if Component.LevType is None: self.units['lev'] = '-'
         self._setAxis('lev', LevType=Component.LevType, **kwargs)
 
@@ -62,7 +62,7 @@ class Grid:
                 self.value[AxisName] = (arange(n)+0.5)*180./n -90.
             if AxisName is 'lev':
                 if LevType == 'p' :
-                    self.value[AxisName] = (arange(n)+0.5)*1000./n
+                    self.value[AxisName] = (arange(n)+0.5)[::-1]*100000./n
                 elif LevType is None:
                     self.value[AxisName] = arange(n)
                 else: raise ValueError, \

@@ -51,6 +51,8 @@ Extensions = [
      'dir':'src/radiation/chou'},
     {'name':'greygas_radiation',
      'dir':'src/radiation/greygas'},
+    {'name':'newgreygas_radiation',
+     'dir':'src/radiation/greynew'},
     {'name':'ozone',
      'dir':'src/radiation/ozone'},
     {'name':'insolation',
@@ -211,6 +213,14 @@ def setupClimt():
                 os.system('python setup.py build_ext --inplace')
                 os.chdir(curr_folder)
                 os.system('cp %s/_simple_physics.so %s/simple_physics.py lib/climt' %(ext['dir'],ext['dir']))
+        elif ext['name'] == 'newgreygas_radiation':
+                curr_folder = os.getcwd()
+                os.chdir(ext['dir'])
+                os.system('rm _grey_gas.c')
+                os.system('python setup.py build_ext --inplace')
+                os.chdir(curr_folder)
+                os.system('cp %s/_new_grey.so lib/climt' %(ext['dir']))
+
         else:
             build_ext(**ext)
 

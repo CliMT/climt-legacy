@@ -1,4 +1,7 @@
 *.so
+*.swp
+*.swo
+*.swn
 *.pyc
 *.pyf
 build

@@ -221,7 +221,7 @@ class Panel:
                 self.handle = pylab.plot(plot_field, AxisVal[0], 'bo-').pop(0)
                 self.axes = pylab.gca()
                 pylab.xlim(MinVal, MaxVal)
-                pylab.ylim(AxisVal[0][-1], AxisVal[0][0] )
+                pylab.ylim(AxisVal[0][0], AxisVal[0][-1] )
             else:
                 if Subplot in ['111','212','223','224']: pylab.xlabel(AxisName[0])
                 self.orientation = 1

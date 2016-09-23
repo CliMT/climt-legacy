@@ -80,7 +80,7 @@ class radiation(Component):
     def __init__(self, scheme = 'ccm3', **kwargs):
         # Initialize scheme-dependent attributes
         if scheme in ['gray','grey','graygas']: scheme='greygas'
-        if scheme not in ['greygas','chou','ccm3','cam3', 'rrtm']:
+        if scheme not in ['greygas','chou','ccm3','cam3', 'rrtm','newgreygas']:
             raise ValueError,'\n \n ++++ CliMT.radiation: Scheme %s unknown' % scheme
         exec('self.__%s__init__()' % string.lower(scheme))
 
@@ -166,12 +166,33 @@ class radiation(Component):
         self.Extension      = _greygas_radiation
         self.driver         = _greygas_radiation.driver
         self.SteppingScheme = 'explicit'
+        #self.ToExtension    = ['beta_greygas','stebol','g','dt','Cpd','tau_inf','alpha_greygas','T','q','p','ps','solin','Ts']
         self.ToExtension    = ['beta_greygas','stebol','g','dt','Cpd','tau_inf','alpha_greygas','T','q','p','ps','solin','Ts']
         self.FromExtension  = ['Tinc','TdotRad','SrfRadFlx','swhr','swflx','lwhr','lwflx','lwuflx','lwdflx','lwtau']
         self.Required       = ['T','q','p','ps','solin','Ts']
         self.Prognostic     = ['T']
         self.Diagnostic     = ['TdotRad','SrfRadFlx','lwhr','lwflx','lwuflx','lwdflx','lwtau']
-    
+
+    def __newgreygas__init__(self):
+        # Load extension
+        try: import _new_grey
+        except: raise ImportError, '\n \n ++++ CliMT.radiation: Could not load grey gas scheme'
+        # Define some attributes
+        self.Name           = 'newgreygas_radiation'
+        self.LevType        = 'p'
+        self.Extension      = _new_grey
+        self.driver         = _new_grey.driver
+        self.SteppingScheme = 'explicit'
+        #self.ToExtension    = ['beta_greygas','stebol','g','dt','Cpd','tau_inf','alpha_greygas','T','q','p','ps','solin','Ts']
+        self.ToExtension    = ['beta_greygas','stebol','g','dt','Cpd','tau_inf','alpha_greygas','T','p','ps','solin','Ts','pint']
+        self.FromExtension  = ['Tinc']
+        #self.FromExtension  = ['Tinc','TdotRad','SrfRadFlx','swhr','swflx','lwhr','lwflx','lwuflx','lwdflx','lwtau']
+        self.Required       = ['T','p','ps','solin','Ts','pint']
+        #self.Required       = ['T','q','p','ps','solin','Ts','pint']
+        self.Prognostic     = ['T']
+        self.Diagnostic     = []
+        #self.Diagnostic     = ['TdotRad','SrfRadFlx','lwhr','lwflx','lwuflx','lwdflx','lwtau']
+
     def __rrtm__init__(self):
         # Load extension
         try: import _rrtm_radiation
