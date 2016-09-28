@@ -1,10 +1,13 @@
 import numpy as np
 from component import Component
-import _simple_physics as phys
+import _simple_physics_custom as phys
+from grid import Grid
 
-class simple_physics(Component):
+class simple_physics_custom(Component):
     """
-    Interface to the simple physics package 
+    Interface to the simple physics package. This is a modified version which allows the
+    user to switch off any of the three routines : large scale condensation, surface fluxes,
+    or boundary layer parameterisation
     
     Reed and Jablonowski 2012: 
     title = {Idealized tropical cyclone simulations of intermediate complexity: a test case for {AGCMs}}
@@ -27,14 +30,46 @@ class simple_physics(Component):
     dt              0            The (constant) time step to be  seconds
                                  used by the physics
 
-    and the following OPTIONAL arguments:
+    Ts              2            The surface temperature to use IF
+                                 use_ext_ts is True (= 1)
+
+    and the following OPTIONAL arguments (1 indicates True, use 0 for False):
+
     Name           Dims         Meaning                        Units     Default                Notes
     
-    'cyclone'       0           Integer indicating if                    1
+    cyclone         0           Integer indicating if                    1
                                 the physics must simulate
                                 a cyclone. If 0, it
                                 will simulate a moist baroclinic
-                                environment
+                                environment. This option is used
+                                only to generate surface temperatures.
+                                This will be ignored if external 
+                                surface temperatures are
+                                prescribed
+
+    lsc             0           Integer indicating whether
+                                large scale condensation is active       1
+
+    pbl             0           Integer indicating whether               1
+                                boundary layer is active
+
+    surf_flux       0           Integer indicating whether               1
+                                surface fluxes are active
+
+    use_ext_ts      0           Integer indicating whether               0
+                                surface temperature is externally
+                                specified (else internal default
+                                corresponding to constant value
+                                of 302.15 K is used)
+
+    qflux           0           Integer indicating whether surface       1
+                                latent heat fluxes are calculated
+
+    momflux         0           Integer indicating whether surface       1
+                                momentum fluxes are calculated
+
+    tflux           0           Integer indicating whether surface       1
+                                sensible heat fluxes are calculated
 
 
     Usage
@@ -79,8 +114,6 @@ class simple_physics(Component):
 
     def __init__(self, **kwargs):
 
-        if 'grid' not in kwargs:
-            raise IndexError, '\n\n grid is a required argument'
 
         self.Name = 'simple_physics'
         self.LevType = 'p'
@@ -91,10 +124,9 @@ class simple_physics(Component):
         self.Prognostic = ['U', 'V', 'T', 'q']
         self.Diagnostic = ['precc']
 
+        if 'grid' not in kwargs:
+           kwargs['grid'] = Grid(self,**kwargs)
 
-        simulate_cyclone = 1
-        if 'cyclone' in kwargs:
-            simulate_cyclone = kwargs.pop('cyclone')
 
         time_step = 0
         if 'dt' not in kwargs:
@@ -105,10 +137,10 @@ class simple_physics(Component):
         nlons = kwargs['grid']['nlon']
         time_step = kwargs['dt']
 
-        phys.init_simple_physics(1, nlons, nlats, nlevs, time_step, **kwargs)
-
+        phys.init_simple_physics(1, nlons, nlats, nlevs, time_step, kwargs)
 
         Component.__init__(self,**kwargs)
+
 
     def driver(self, u, v, temp, p, pint, q, ps, simTime=-1):
         '''

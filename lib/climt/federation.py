@@ -69,6 +69,7 @@ class federation(Component):
         self.Integrators = []
         self.Integrates = []
         self.FromExtension = []
+        self.CanIntegrate = False
         for component in components:
             if component.CanIntegrate:
                 self.CanIntegrate = component.CanIntegrate
@@ -89,8 +90,9 @@ class federation(Component):
                 self.Integrators.append(component)
                 print component.Name, ' can integrate ', component.Integrates
 
-        print 'All fields integrated by federation members: ', self.Integrates
-        print 'All fields returned by federation members: ', self.FromExtension
+        if self.CanIntegrate:
+            print 'All fields integrated by federation members: ', self.Integrates
+            print 'All fields returned by federation members: ', self.FromExtension
 
         # Other attributes
         self.Name      = 'federation'

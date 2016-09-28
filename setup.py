@@ -209,10 +209,12 @@ def setupClimt():
         elif ext['name'] == 'simple_physics':
                 curr_folder = os.getcwd()
                 os.chdir(ext['dir'])
-                os.system('rm _simple_physics.c')
+                os.system('rm _simple_physics.c _simple_physics_custom.c')
                 os.system('python setup.py build_ext --inplace')
                 os.chdir(curr_folder)
-                os.system('cp %s/_simple_physics.so %s/simple_physics.py lib/climt' %(ext['dir'],ext['dir']))
+                os.system('cp %s/_simple_physics.so %s/simple_physics.py \
+                          %s/_simple_physics_custom.so %s/simple_physics_custom.py lib/climt'\
+                          %(ext['dir'],ext['dir'],ext['dir'],ext['dir']))
         elif ext['name'] == 'newgreygas_radiation':
                 curr_folder = os.getcwd()
                 os.chdir(ext['dir'])

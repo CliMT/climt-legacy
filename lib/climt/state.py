@@ -164,7 +164,8 @@ class State:
         # Set fields' values to input or default
         Shape3D = self.Grid.Shape3D
         #print Shape3D, ' is the shape'
-        Shape2D = Shape3D[:-1]
+        Shape2D = Shape3D[0:-1]
+
         for Field in FieldNames:
             exec('Shape = Shape%s' % KnownFields[Field][2])
             if Field in kwargs:
@@ -178,6 +179,7 @@ class State:
             else:
                 self.Now[Field] = self._getDefault(Field, Shape, **kwargs)
 
+        #TODO Figure out how to get rid of this statement.
         # Catch some anomalous cases
         if 'p' in FieldNames and 'p' not in kwargs and LevType == 'p':
             self.Now['p'] = np.resize(self.Grid['lev'],Shape3D)
@@ -221,9 +223,10 @@ class State:
         # Surface pressure
         if 'pint' == Field:
             if 'p' not in self.Now.keys():
-                self._getDefault('p', Shape, **kwargs)
+                self.Now['p'] = self._getDefault('p', Shape, **kwargs)
+
             if 'ps' not in self.Now.keys():
-                self._getDefault('ps', Shape, **kwargs)
+                self.Now['ps'] = self._getDefault('ps', Shape[0:-1], **kwargs)
 
             press = self.Now['p']
             newShape = [Shape[0], Shape[1], Shape[2]+1]
