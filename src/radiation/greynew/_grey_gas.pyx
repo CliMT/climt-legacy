@@ -6,8 +6,9 @@ def driver(*args):
     beta, sigma, g, dt, Cpd, tau_inf, alpha,\
         T, p, ps, solin, Ts, pint = args
 
+    new_ps = ps[:,:,np.newaxis]
 
-    opt_depth = (tau_inf/beta)*(1. - (pint/ps)**alpha)
+    opt_depth = (tau_inf/beta)*(1. - (pint/new_ps)**alpha)
 
 
     lwflux, upwelling, downwelling = compute_fluxes(beta,sigma,T,opt_depth,Ts)
