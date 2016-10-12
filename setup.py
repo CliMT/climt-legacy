@@ -72,7 +72,9 @@ Extensions = [
      'dir':'src/idealised/simple_physics'},
     {'name':'dcmip',
      'dir':'src/idealised/dcmip'
-    }
+    },
+    {'name':'emanuel_convection_new',
+     'dir':'src/convection/emanuel'}
     ]
 
 # define extensions that will be built when the --lite option is used
@@ -198,14 +200,17 @@ def setupClimt():
     for ext in Extensions: 
         if ext['name'] == 'gfs_dynamics' :
             build_dycore(**ext)
+
         elif ext['name'] == 'held_suarez':
                 os.system('cp %s/held_suarez.py lib/climt' % ext['dir'])
+
         elif ext['name'] == 'dcmip':
                 curr_folder = os.getcwd()
                 os.chdir(ext['dir'])
                 os.system('python setup.py build_ext --inplace')
                 os.chdir(curr_folder)
                 os.system('cp %s/dcmip.so lib/climt' % ext['dir'])
+
         elif ext['name'] == 'simple_physics':
                 curr_folder = os.getcwd()
                 os.chdir(ext['dir'])
@@ -215,6 +220,7 @@ def setupClimt():
                 os.system('cp %s/_simple_physics.so %s/simple_physics.py \
                           %s/_simple_physics_custom.so %s/simple_physics_custom.py lib/climt'\
                           %(ext['dir'],ext['dir'],ext['dir'],ext['dir']))
+
         elif ext['name'] == 'newgreygas_radiation':
                 curr_folder = os.getcwd()
                 os.chdir(ext['dir'])
@@ -222,6 +228,14 @@ def setupClimt():
                 os.system('python setup.py build_ext --inplace')
                 os.chdir(curr_folder)
                 os.system('cp %s/_new_grey.so lib/climt' %(ext['dir']))
+
+        elif ext['name'] == 'emanuel_convection_new':
+                curr_folder = os.getcwd()
+                os.chdir(ext['dir'])
+                os.system('rm _emanuel_convection.c')
+                os.system('python setup.py build_ext --inplace')
+                os.chdir(curr_folder)
+                os.system('cp %s/_emanuel_convection_new.so lib/climt' %(ext['dir']))
 
         else:
             build_ext(**ext)
