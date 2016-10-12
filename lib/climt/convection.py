@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from component  import Component
+from grid import Grid
 from numpy import *
 import string
 
@@ -17,7 +18,7 @@ class convection(Component):
     '''
     def __init__(self, scheme = 'hard', **kwargs):
         # Initialize scheme-dependent attributes
-        try: exec('self.__%s__init__()' % string.lower(scheme))
+        try: exec('self.__%s__init__(**kwargs)' % string.lower(scheme))
         except: raise ValueError,'\n \n ++++ CliMT.convection: Scheme "%s" unknown' % scheme
 
         # Initialize fields etc. 
@@ -42,6 +43,48 @@ class convection(Component):
         self.Prognostic     = ['T','q']
         self.Diagnostic     = ['T','q','theta','TdotConv','qdotConv','cbmf','precc']
                               # adiab adjustment resets T,q profiles on output
+
+    def __emanuelnew__init__(self, **kwargs):
+        # Load extension
+        try: import _emanuel_convection_new as _emanuel_convection
+        except: raise ImportError, '\n \n ++++ CliMT.convection: Could not load Emanuel scheme'
+        # Define some attributes
+        self.Name           = 'emanuel_convection'
+        self.LevType        = 'p'
+        self.Extension      = _emanuel_convection
+        self.driver         = _emanuel_convection.driver
+        self.SteppingScheme = 'explicit'
+        self.ToExtension    = ['T', 'q', 'U', 'V', 'p', 'pint']
+        #self.FromExtension  = ['Tinc','qinc','Uinc','Vinc','precc']
+        self.FromExtension  = ['Tinc','qinc','precc', 'TdotConv', 'qdotConv']
+        self.Required       = ['T', 'q', 'U', 'V', 'p', 'pint', 'TdotConv', 'qdotConv', 'precc']
+        #self.Prognostic     = ['T','q', 'U', 'V']
+        self.Prognostic     = ['T','q']
+        self.Diagnostic     = ['precc', 'TdotConv', 'qdotConv']
+
+        ntracers = 0
+
+        if 'grid' not in kwargs:
+           kwargs['grid'] = Grid(self,**kwargs)
+
+        nlevs = kwargs['grid']['nlev']
+        nlats = kwargs['grid']['nlat']
+        nlons = kwargs['grid']['nlon']
+
+        time_step = 0
+        if 'dt' not in kwargs:
+            raise IndexError, '\n\n dt is a required argument'
+
+        time_step = kwargs['dt']
+
+        if 'ntracer' in kwargs:
+            ntracers = kwargs['ntracer']
+        else:
+            ntracers = 0
+
+        _emanuel_convection.init_emanuel_convection(nlevs, nlats, nlons, time_step, ntracers)
+
+
 
     def __hard__init__(self):
         # Load extension
