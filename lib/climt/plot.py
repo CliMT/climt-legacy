@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import numpy as np
 
 if 'climt_lite' in __file__:
     Lite = True
@@ -8,6 +9,7 @@ else:
 try:
     try:    import matplotlib.pylab as pylab
     except: import matplotlib.matlab as pylab
+    import matplotlib.pyplot as plt
     # catch old versions which use set instead of setp
     if not hasattr(pylab,'setp'): pylab.setp = pylab.set
     # gives right aspect ratio in subplots
@@ -150,6 +152,7 @@ class Monitor:
                 if Panel.orientation == 0:
                     Panel.handle.set_xdata(Field)
                     Panel.axes.set_xlim([MinVal, MaxVal])
+                    Panel.axes.get_xaxis().get_major_formatter().set_powerlimits((-2,3))
                 else:
                     Panel.handle.set_ydata(Field)
                     Panel.axes.set_ylim([MinVal, MaxVal])
@@ -220,6 +223,7 @@ class Panel:
                 self.orientation = 0
                 self.handle = pylab.plot(plot_field, AxisVal[0], 'bo-').pop(0)
                 self.axes = pylab.gca()
+                self.axes.get_xaxis().get_major_formatter().set_scientific(True)
                 pylab.xlim(MinVal, MaxVal)
                 pylab.ylim(AxisVal[0][0], AxisVal[0][-1] )
             else:
