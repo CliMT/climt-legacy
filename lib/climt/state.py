@@ -130,11 +130,9 @@ class State:
             #Update them to zero
                 
             if key not in Component.IncOld.keys():
-                print 'initialising incOld'
                 Component.IncOld[key] = np.zeros(Shape)
 
             if key not in Component.IncOlder.keys():
-                print 'initialising incOlder'
                 Component.IncOlder[key] = np.zeros(Shape)
 
             self.Now[key] = \
