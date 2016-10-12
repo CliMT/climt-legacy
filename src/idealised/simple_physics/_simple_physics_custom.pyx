@@ -87,6 +87,10 @@ def init_simple_physics(int columns, int lons, int lats, int levels, double dt,
         t_surf = kwargs.pop('Ts')
         cyclone_simulation = 0
 
+    #Sanity check
+    if 'Ts' in kwargs and 'use_ext_ts' not in kwargs:
+        raise IndexError, 'Ts specified when use_ext_ts is not'
+
 
     #TODO Until we are happy and stable, only one column
     num_cols = 1
