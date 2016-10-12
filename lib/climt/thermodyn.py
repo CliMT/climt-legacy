@@ -28,7 +28,7 @@ def qs(T, p, Rd=None, Rv=None):
   '''
   if Rd  is None: Rd  = Parameters()['Rd']
   if Rv  is None: Rv  = Parameters()['Rv']
-  return squeeze(_thermodyn.qs(Rd,Rv,T,p))
+  return _thermodyn.qs(Rd,Rv,T,p)
 
 def ws(T, p, Rd=None, Rv=None):
   '''
