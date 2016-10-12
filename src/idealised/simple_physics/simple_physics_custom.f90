@@ -61,7 +61,7 @@ subroutine simple_physics_func (pcols, pver, dtime, lat, t, q, u, v, pmid, pint,
 
    implicit none
 
-   integer, parameter :: r8 = selected_real_kind(12)
+   integer, parameter :: r8 = c_double
 
 !
 ! Input arguments - MODEL DEPENDENT
