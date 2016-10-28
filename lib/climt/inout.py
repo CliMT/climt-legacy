@@ -50,28 +50,39 @@ class IO:
             self.Appending = False
             return
 
+        self.RestartFileName = None
+        self.OutputFileName = None
+        self.OutputFieldNames = None
+        self.OutputFreq = 86400.
+
+        self.DoingOutput = False
+        self.Appending = False
+
+        # Inititalize output time index
+        self.OutputTimeIndex = 0
+
         # Restart file name
-        try:    self.RestartFileName = kwargs['RestartFile']
-        except: self.RestartFileName = None
+        if 'RestartFile' in kwargs:
+            self.RestartFileName = kwargs['RestartFile']
 
         # Output file name
-        try:    self.OutputFileName = kwargs['OutputFile']
-        except: self.OutputFileName = None
+        if 'OutputFile' in kwargs:
+            self.OutputFileName = kwargs['OutputFile']
 
         # If no fields are specified, ALL fields in State will
         # be output (see writeOuput)
-        try:    self.OutputFieldNames = kwargs['OutputFields']
-        except: self.OutputFieldNames = None
+        if 'OutputFields' in kwargs:
+            self.OutputFieldNames = kwargs['OutputFields']
 
         # If no output frequency specifed, output once daily
-        try:    self.OutputFreq = kwargs['OutputFreq']
-        except: self.OutputFreq = 86400.
+        if 'OutputFreq' in kwargs:
+            self.OutputFreq = kwargs['OutputFreq']
 
         # Decide if we're doing output
         if  self.OutputFileName is not None:
             self.DoingOutput = True
         else:
-            self.DoingOutput = False
+            return
 
         # Decide if we're appending output to restart file
         if self.OutputFileName is not None and \
@@ -92,8 +103,6 @@ class IO:
         if len(OddFields) > 0: raise \
            '\n +++ CliMT.IO.init: Output fields %s not recognized\n' % str(list(OddFields))
         
-        # Inititalize output time index
-        self.OutputTimeIndex = 0
 
 
     def readRestart(self, FieldNames, ParamNames, kwargs):
@@ -188,7 +197,7 @@ class IO:
         var.long_name = 'level'
         var.units     = 'mb'
         var.depth     = 'true'
-        var[:] = State.Grid['lev'][::-1]
+        var[:] = State.Grid['lev']
         for key in ['lat','lon']:
             createDimension(key,len(State.Grid[key]))
             var = createVariable(key,'d',(key,))
@@ -218,7 +227,7 @@ class IO:
         if State.ElapsedTime == 0. or self.OutputFieldNames == None:
             #For now, until we figure this out
             #OutputFieldNames = self.AllFields
-            OutputFieldNames = State.keys()
+            OutputFieldNames = self.OutputFieldNames
         else:
             OutputFieldNames = self.OutputFieldNames
 
