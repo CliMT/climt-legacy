@@ -65,6 +65,7 @@ KnownFields = {
     'UdotTurb': ['turbulent zonal drag', 'm s-1 day-', '3D'],
     'VdotDyn': ['dynamical merid accn', 'm s-1 day-1', '3D'],
     'VdotTurb': ['turbulent merid drag', 'm s-1 day-1', '3D'],
+    'cape': ['Convective avail. potential energy', 'J kg-1', '2D'],
     # SHOULD THESE BE PARAMETERS?
     'cloud_single_scattering_albedo': ['blah', 'blah', '3D'],
     'cloud_asymmetry_parameter': ['blah', 'blah', '3D'],
@@ -205,12 +206,15 @@ class State:
         for key in ['lat','lon']: kwargs[key]=self.Grid[key] 
         if 'OutputFile' in kwargs: kwargs.pop('OutputFile')
         if 'MonitorFields' in kwargs: kwargs.pop('MonitorFields')
+        if 'OutputFields' in kwargs: kwargs.pop('OutputFields')
         
         # Pressure
         if 'p' == Field:
             nlev = Shape[-1]
             lev = (np.arange(nlev)+0.5)[::-1] * 100000./nlev
-            return np.resize(lev,Shape)
+
+            pressure = np.resize(lev,Shape)
+            return pressure
 
         # Level thickness
         if 'dp' == Field: return np.zeros(Shape,'d') -99. # set as missing
@@ -291,8 +295,10 @@ class State:
             from insolation import insolation
             insolation = insolation(**kwargs)
 
-        if 'zen'   == Field: return insolation.State['zen']
-        if 'solin' == Field: return insolation.State['solin']
+        if 'zen'   == Field:
+            return insolation.State['zen']
+        if 'solin' == Field:
+            return insolation.State['solin']
 
         # Surface upwelling LW
         if 'flus' == Field: return np.zeros(Shape,'d') -99. # set to missing as default
