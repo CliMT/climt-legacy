@@ -56,11 +56,11 @@ class convection(Component):
         self.SteppingScheme = 'explicit'
         self.ToExtension    = ['T', 'q', 'U', 'V', 'p', 'pint']
         #self.FromExtension  = ['Tinc','qinc','Uinc','Vinc','precc']
-        self.FromExtension  = ['Tinc','qinc','precc', 'TdotConv', 'qdotConv']
-        self.Required       = ['T', 'q', 'U', 'V', 'p', 'pint', 'TdotConv', 'qdotConv', 'precc']
+        self.FromExtension  = ['Tinc','qinc','precc', 'TdotConv', 'qdotConv', 'cape']
+        self.Required       = ['T', 'q', 'U', 'V', 'p', 'pint', 'TdotConv', 'qdotConv', 'precc', 'cape']
         #self.Prognostic     = ['T','q', 'U', 'V']
         self.Prognostic     = ['T','q']
-        self.Diagnostic     = ['precc', 'TdotConv', 'qdotConv']
+        self.Diagnostic     = ['precc', 'TdotConv', 'qdotConv', 'cape']
 
         ntracers = 0
 
