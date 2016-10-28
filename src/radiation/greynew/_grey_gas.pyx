@@ -51,6 +51,8 @@ cdef compute_fluxes(double beta,
         down[:,:,lev] = down[:,:,lev+1]*np.exp(-dtau[:,:,lev])\
             - sigma*(T[:,:,lev]**4)*(1. - np.exp(-dtau[:,:,lev]))
 
+    up = beta*up + (1.-beta)*sigma*(Ts[:,:,np.newaxis]**4)
+    down = beta*down
     lwflux = up + down
 
     return lwflux, up, down
