@@ -137,7 +137,7 @@ c Local
       r_liq_col = r_liq(i,j,km:1:-1)
       r_ice_col = r_ice(i,j,km:1:-1)
       pmidm1_col = pmidm1(i,j,km:1:-1)/100.
-      qm1_col = qm1(i,j,km:1:-1)
+      qm1_col = qm1(i,j,km:1:-1)*1000.
       qm1_col(1:4) = 0.0
       qrs_col(:) = 0
       qrl_col(:) = 0
