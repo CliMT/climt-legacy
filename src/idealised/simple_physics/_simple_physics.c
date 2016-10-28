@@ -4337,7 +4337,7 @@ __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_33, 1, (PyObject *(*)(char *)) __
  *             q_out[lon,lat,:] = (q[::-1] - q_ext[lon,lat,:])
  *             precip_out[lon,lat] = precip             # <<<<<<<<<<<<<<
  * 
- *     '''
+ * 
  */
       __pyx_t_13 = PyFloat_FromDouble(__pyx_v_15_simple_physics_precip); if (unlikely(!__pyx_t_13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_13);
@@ -4373,14 +4373,13 @@ __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_33, 1, (PyObject *(*)(char *)) __
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "_simple_physics.pyx":148
- *     '''
+  /* "_simple_physics.pyx":135
+ * 
  * 
  *     return t_out, u_out, v_out, q_out, precip_out             # <<<<<<<<<<<<<<
- * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = PyTuple_New(5); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = PyTuple_New(5); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_INCREF(__pyx_v_t_out);
   __Pyx_GIVEREF(__pyx_v_t_out);

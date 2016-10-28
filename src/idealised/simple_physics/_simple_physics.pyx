@@ -131,19 +131,5 @@ def get_tendencies(cnp.ndarray[cnp.double_t, ndim=3] u_ext,
             q_out[lon,lat,:] = (q[::-1] - q_ext[lon,lat,:])
             precip_out[lon,lat] = precip
     
-    '''
-    print 'T has nan: ', np.any(np.isnan(t_out))
-    print 'U has nan: ', np.any(np.isnan(u_out))
-    print 'V has nan: ', np.any(np.isnan(v_out))
-    print 'Q has nan: ', np.any(np.isnan(q_out))
-    print 'P has nan: ', np.any(np.isnan(precip_out))
-
-    print 'T tendency: ', (np.max(t_out))
-    print 'U tendency: ', (np.max(u_out))
-    print 'V tendency: ', (np.max(v_out))
-    print 'Q tendency: ', (np.max(q_out))
-    print 'P tendency: ', (np.max(precip_out))
-    '''
 
     return t_out, u_out, v_out, q_out, precip_out
-
