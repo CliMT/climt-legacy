@@ -975,16 +975,19 @@ c+++climt calday used only for insolation, specified by user in climt
       calday = 0.
 c+++climt      read (5,*) calday
 c     CCM: control/comtim.h: calday set in CCM: ccmlsm_share/calendr()
-      if (dbg_lvl.gt.0) write (6,*) calday,' = Julian day of year (1.5 = Noon, Jan 1; from 1 to 365)'
+      if (dbg_lvl.gt.0) write (6,*) calday,
+     +    ' = Julian day of year (1.5 = Noon, Jan 1; from 1 to 365)'
 c+++climt lat_dgr used only for insolation, specified by user in climt
       lat_dgr = 0.
 c+++climt      read (5,*) lat_dgr
-      if (dbg_lvl.gt.0) write (6,*) lat_dgr,' = Latitude (degrees North, from -90.0 to +90.0)'
+      if (dbg_lvl.gt.0) write (6,*) lat_dgr, 
+     +     ' = Latitude (degrees North, from -90.0 to +90.0)'
 #ifdef NEW_FMT
 c+++climt lon_dgr used only for insolation, specified by user in climt
       lon_dgr = 0.
 c+++climt      read (5,*) lon_dgr
-      if (dbg_lvl.gt.0) write (6,*) lon_dgr,' = Longitude (degrees East, from 0.0 to 360.0)'
+      if (dbg_lvl.gt.0) write (6,*) lon_dgr, 
+     +     ' = Longitude (degrees East, from 0.0 to 360.0)'
 #endif /* not NEW_FMT */
 c+++climt      read (5,'(a80)') lbl
       if (dbg_lvl.gt.0) write (6,*) lbl
@@ -1008,7 +1011,7 @@ c     Convert pressures from mb to pascals and define interface pressures:
       enddo                  !          end loop over lev
       do k=1,plevp
          if(k.eq.1) then
-            pintm1(i,k)=1.e-9 ! Pa
+            pintm1(i,k)=100. ! Pa
          else if (k.gt.1.and.k.le.plev) then
             pintm1(i,k)=0.5*(pmidm1(i,k-1)+pmidm1(i,k)) ! Pa
          else if (k.eq.plevp) then
