@@ -218,7 +218,7 @@ subroutine simple_physics_func (pcols, pver, dtime, lat, t, q, u, v, pmid, pint,
       v20      = 20.0_r8        ! Threshold wind speed for calculating Cd from Smith and Vogl 2008
       p0       = 100000.0_r8    ! Constant for potential temp calculation
       pbltop   = 85000._r8      ! Top of boundary layer
-      pblconst = 20000._r8      ! Constant for the calculation of the decay of diffusivity
+      pblconst = 10000._r8      ! Constant for the calculation of the decay of diffusivity
       T00      = 288.0_r8         ! Horizontal mean T at surface for moist baro test
       u0       = 35.0_r8          ! Zonal wind constant for moist baro test
       latw     = 2.0_r8*pi/9.0_r8 ! Halfwidth for  for baro test
