@@ -4,8 +4,6 @@ CliMT is a Python-based software component toolkit which provides a
  flexible, multi-purpose problem-solving environment geared to climate
  science problems.
 
-See http://people.su.se/~rcaba/climt for further details.
-
 ## Requirements:
 * Python 2.4 or higher
 * Numpy 1.0 or higher
